@@ -1128,6 +1128,43 @@
   </div>
 
   <!-- ========================================== -->
+  <!-- MODAL: RESET KATA SANDI PEGAWAI (ADMIN) -->
+  <!-- ========================================== -->
+  <div id="modalResetPassword" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 440px;">
+      <div style="padding: 16px 20px; border-bottom: 1px solid var(--outline); display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="font-heading" style="font-size: 15px; font-weight: 700;">Reset Kata Sandi Pegawai</h3>
+        <button onclick="closeModalResetPassword()" class="btn btn-outline" style="padding: 6px; border: none;">
+          <span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+        </button>
+      </div>
+
+      <form id="formResetPassword" onsubmit="submitResetPassword(event)" style="padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+        <div class="card-sm" style="background: var(--surface-low);">
+          <div id="resetPegawaiName" style="font-weight: 700; font-size: 13px;">Nama Pegawai</div>
+          <div id="resetPegawaiInfo" style="font-size: 11px; color: var(--text-muted); font-family: monospace;">@username</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="resetNewPassword">Kata Sandi Baru (minimal 8 karakter)</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="resetNewPassword" required minlength="8" autocomplete="off" class="form-input" style="font-family: monospace;"/>
+            <button type="button" onclick="generateResetPassword()" class="btn btn-outline" style="white-space: nowrap; font-size: 11px;">Buat Acak</button>
+          </div>
+          <span style="font-size: 11px; color: var(--text-muted);">
+            Sampaikan sandi ini ke pegawai secara langsung, lalu minta ia menggantinya lewat ikon kunci di header. Semua sesi login pegawai ini akan dikeluarkan.
+          </span>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
+          <button type="button" onclick="closeModalResetPassword()" class="btn btn-outline">Batal</button>
+          <button type="submit" id="btnSubmitResetPassword" class="btn btn-primary">Reset Sandi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
   <!-- MODAL: GANTI KATA SANDI -->
   <!-- ========================================== -->
   <div id="modalChangePassword" class="modal-overlay hidden">
@@ -1188,7 +1225,7 @@
     // ==========================================
     // KONFIGURASI: tempel URL Web App Apps Script (berakhiran /exec)
     // ==========================================
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxE_VHbxYTYJV9HWslu6yn_9wLhu1RC2MuG5ZtlfL_Ekwv2eBfojm_C1AjLS5YCfSxnUQ/exec';
+    var API_URL = 'GANTI_DENGAN_URL_EXEC_APPS_SCRIPT';
 
     // System State
     var currentUser = null;
@@ -1687,6 +1724,12 @@
       var html = '';
       list.forEach(function(p) {
         var isAktif = p.status === 'Aktif';
+        var isSelf = !!(currentUser && p.username === currentUser.username);
+        var resetBtn = isSelf ? '' :
+          '<button onclick="openModalResetPassword(\'' + p.id + '\')" class="btn btn-outline" style="padding: 6px 10px; font-size: 11px;" title="Reset kata sandi pegawai">' +
+            '<span class="material-symbols-outlined" style="font-size: 16px;">lock_reset</span>' +
+            '<span>Reset Sandi</span>' +
+          '</button>';
         var statusBadge = isAktif ? '<span class="badge badge-success">Aktif</span>' : '<span class="badge badge-danger">Nonaktif</span>';
         var roleBadge = p.role === 'Admin' ? '<span class="badge badge-primary">Admin HRD</span>' : '<span class="badge badge-neutral">Pegawai</span>';
 
@@ -1701,12 +1744,14 @@
               '<div style="font-size: 11px; color: var(--text-muted);">@' + p.username + '</div>' +
             '</div>' +
           '</div>' +
-          '<div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--outline); padding-top: 10px;">' +
+          '<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; border-top: 1px solid var(--outline); padding-top: 10px;">' +
             '<div style="display: flex; gap: 4px;">' + roleBadge + statusBadge + '</div>' +
-            '<button onclick="viewEmployeeDetail(\'' + p.nip + '\')" class="btn btn-primary" style="padding: 6px 12px; font-size: 11px;">' +
-              '<span class="material-symbols-outlined" style="font-size: 16px;">photo_library</span>' +
-              '<span>Lihat Data & Galeri</span>' +
-            '</button>' +
+            '<div style="display: flex; gap: 6px;">' + resetBtn +
+              '<button onclick="viewEmployeeDetail(\'' + p.nip + '\')" class="btn btn-primary" style="padding: 6px 12px; font-size: 11px;">' +
+                '<span class="material-symbols-outlined" style="font-size: 16px;">photo_library</span>' +
+                '<span>Lihat Data & Galeri</span>' +
+              '</button>' +
+            '</div>' +
           '</div>' +
         '</div>';
       });
@@ -1812,6 +1857,75 @@
         } else {
           showToast(res.message || 'Gagal menambahkan pegawai.', 'error');
         }
+      });
+    }
+
+    var resetTargetId = null;
+
+    function openModalResetPassword(id) {
+      var list = adminDataCache.pegawaiList || [];
+      var target = null;
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].id === id) { target = list[i]; break; }
+      }
+      if (!target) {
+        showToast('Data pegawai tidak ditemukan. Klik Sinkronkan Spreadsheet lalu coba lagi.', 'warning');
+        return;
+      }
+      resetTargetId = id;
+      document.getElementById('formResetPassword').reset();
+      document.getElementById('resetPegawaiName').innerText = target.fullname;
+      document.getElementById('resetPegawaiInfo').innerText = '@' + target.username + '  |  NIP: ' + target.nip;
+      document.getElementById('modalResetPassword').classList.remove('hidden');
+    }
+
+    function closeModalResetPassword() {
+      document.getElementById('modalResetPassword').classList.add('hidden');
+      document.getElementById('resetNewPassword').value = '';
+      resetTargetId = null;
+    }
+
+    function generateResetPassword() {
+      // Tanpa huruf yang mudah tertukar (I, l, O, 0, 1)
+      var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+      var arr = new Uint32Array(10);
+      crypto.getRandomValues(arr);
+      var pwd = '';
+      for (var i = 0; i < arr.length; i++) {
+        pwd += chars.charAt(arr[i] % chars.length);
+      }
+      document.getElementById('resetNewPassword').value = pwd;
+    }
+
+    function submitResetPassword(e) {
+      e.preventDefault();
+      var pwd = document.getElementById('resetNewPassword').value.trim();
+      var nama = document.getElementById('resetPegawaiName').innerText;
+
+      if (!resetTargetId) return;
+      if (pwd.length < 8) {
+        showToast('Kata sandi baru minimal 8 karakter.', 'warning');
+        return;
+      }
+      if (!confirm('Reset kata sandi ' + nama + '? Sandi lama tidak berlaku lagi dan semua sesi login pegawai ini dikeluarkan.')) return;
+
+      var btn = document.getElementById('btnSubmitResetPassword');
+      btn.disabled = true;
+      btn.innerText = 'Menyimpan...';
+
+      callBackend('resetPegawaiPassword', [sessionToken, resetTargetId, pwd], function(res) {
+        btn.disabled = false;
+        btn.innerText = 'Reset Sandi';
+        if (res.success) {
+          showToast(res.message || 'Kata sandi berhasil direset.', 'success');
+          closeModalResetPassword();
+        } else {
+          showToast(res.message || 'Gagal mereset kata sandi.', 'error');
+        }
+      }, function(err) {
+        btn.disabled = false;
+        btn.innerText = 'Reset Sandi';
+        showToast('Koneksi bermasalah: ' + (err.message || err.toString()), 'error');
       });
     }
 
