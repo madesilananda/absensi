@@ -4,7 +4,7 @@
   <base target="_top"/>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
-  <title>PresensiCore - Enterprise Biometric & HRD Portal</title>
+  <title>PresensiCore - Enterprise Field Biometric & Portal Admin</title>
   
   <!-- Google Fonts: Inter & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -13,10 +13,17 @@
   <!-- Material Symbols Outlined -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
-  <!-- PURE VANILLA CSS DESIGN SYSTEM -->
+  <!-- PURE VANILLA CSS DESIGN SYSTEM (Zero External JS, Guaranteed No White Screen) -->
   <style>
     :root {
-      /* Shared Palette */
+      --primary: #00288e;
+      --primary-hover: #1e40af;
+      --primary-light: #dde1ff;
+      --primary-text: #001453;
+      --secondary: #006c4a;
+      --secondary-hover: #005137;
+      --secondary-light: #85f8c4;
+      --secondary-text: #002114;
       --bg: #f4f6fb;
       --surface: #ffffff;
       --surface-low: #f8fafc;
@@ -35,30 +42,6 @@
       --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
       --shadow-md: 0 4px 12px rgba(0,0,0,0.07);
       --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
-
-      /* ROLE 1: ADMIN PALETTE (Executive Deep Navy) */
-      --admin-primary: #00288e;
-      --admin-hover: #1e40af;
-      --admin-light: #dde1ff;
-      --admin-text: #001453;
-      --admin-header-bg: #0f172a;
-
-      /* ROLE 2: PEGAWAI PALETTE (Fresh Emerald & Indigo) */
-      --pegawai-primary: #006c4a;
-      --pegawai-hover: #005137;
-      --pegawai-light: #85f8c4;
-      --pegawai-text: #002114;
-      --pegawai-accent: #0284c7;
-      --pegawai-accent-light: #e0f2fe;
-
-      /* Defaults (Dynamic) */
-      --primary: var(--admin-primary);
-      --primary-hover: var(--admin-hover);
-      --primary-light: var(--admin-light);
-      --primary-text: var(--admin-text);
-      --secondary: #006c4a;
-      --secondary-light: #85f8c4;
-      --secondary-text: #002114;
     }
 
     * {
@@ -88,12 +71,12 @@
     .container-admin {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 24px 16px 40px;
+      padding: 24px 16px;
     }
-    .container-pegawai {
-      max-width: 600px;
+    .container-mobile {
+      max-width: 500px;
       margin: 0 auto;
-      padding: 20px 16px 90px; /* extra bottom padding for mobile bottom nav */
+      padding: 16px;
     }
 
     /* Cards */
@@ -138,21 +121,13 @@
     .btn-primary:hover {
       background: var(--primary-hover);
     }
-    .btn-pegawai {
-      background: var(--pegawai-primary);
-      color: #ffffff;
-      box-shadow: 0 2px 8px rgba(0,108,74,0.25);
-    }
-    .btn-pegawai:hover {
-      background: var(--pegawai-hover);
-    }
     .btn-secondary {
       background: var(--secondary);
       color: #ffffff;
       box-shadow: 0 2px 8px rgba(0,108,74,0.25);
     }
     .btn-secondary:hover {
-      background: var(--pegawai-hover);
+      background: var(--secondary-hover);
     }
     .btn-outline {
       background: var(--surface);
@@ -205,16 +180,6 @@
       background: var(--surface-high);
       color: var(--text-muted);
     }
-    .badge-admin {
-      background: #fef08a;
-      color: #854d0e;
-      border: 1px solid #fde047;
-    }
-    .badge-pegawai {
-      background: #dcfce7;
-      color: #166534;
-      border: 1px solid #bbf7d0;
-    }
 
     /* Form Inputs */
     .form-group {
@@ -247,26 +212,16 @@
       box-shadow: 0 0 0 3px rgba(0,40,142,0.12);
     }
 
-    /* Headers */
+    /* Header Nav */
     .app-header {
       position: sticky;
       top: 0;
       z-index: 40;
-      background: rgba(255, 255, 255, 0.98);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--outline);
       box-shadow: var(--shadow-sm);
     }
-
-    /* Distinct Admin Header Accent */
-    .app-header.header-admin {
-      border-bottom: 2px solid var(--admin-primary);
-    }
-    /* Distinct Pegawai Header Accent */
-    .app-header.header-pegawai {
-      border-bottom: 2px solid var(--pegawai-primary);
-    }
-
     .header-content {
       max-width: 1200px;
       margin: 0 auto;
@@ -277,7 +232,7 @@
       justify-content: space-between;
     }
 
-    /* Tab bars */
+    /* Tab bar */
     .tab-bar {
       display: flex;
       gap: 8px;
@@ -308,89 +263,6 @@
     .tab-btn:not(.active):hover {
       background: var(--surface-high);
       color: var(--text);
-    }
-
-    /* Pegawai Top Tab Bar */
-    .pegawai-nav-tabs {
-      display: flex;
-      background: var(--surface-high);
-      padding: 4px;
-      border-radius: var(--radius-lg);
-      gap: 4px;
-      margin-bottom: 20px;
-      border: 1px solid var(--outline);
-    }
-    .pegawai-tab-btn {
-      flex: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border-radius: var(--radius-md);
-      font-size: 12px;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      background: transparent;
-      color: var(--text-muted);
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-    .pegawai-tab-btn.active {
-      background: #ffffff;
-      color: var(--pegawai-primary);
-      box-shadow: var(--shadow-sm);
-    }
-
-    /* Mobile Bottom Navigation Bar (Special for Pegawai) */
-    .bottom-nav {
-      display: none;
-    }
-    @media (max-width: 768px) {
-      .bottom-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 50;
-        background: rgba(255, 255, 255, 0.98);
-        backdrop-filter: blur(10px);
-        border-top: 1px solid var(--outline);
-        box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
-        padding: 6px 16px max(6px, env(safe-area-inset-bottom));
-        justify-content: space-around;
-      }
-      .bottom-nav-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 3px;
-        background: none;
-        border: none;
-        color: var(--text-muted);
-        font-size: 11px;
-        font-weight: 600;
-        cursor: pointer;
-        padding: 6px 12px;
-        border-radius: var(--radius-md);
-        transition: all 0.15s;
-        min-width: 68px;
-      }
-      .bottom-nav-item .material-symbols-outlined {
-        font-size: 22px;
-      }
-      .bottom-nav-item.active {
-        color: var(--pegawai-primary);
-        font-weight: 700;
-        background: #e8f5e9;
-      }
-      /* Hide top tabs on small mobile to save space */
-      .pegawai-nav-tabs {
-        display: none;
-      }
     }
 
     /* Tables */
@@ -561,15 +433,15 @@
   <!-- 1. LOGIN SCREEN -->
   <!-- ========================================== -->
   <section id="loginScreen" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px;">
-    <div class="card" style="max-width: 440px; width: 100%; box-shadow: var(--shadow-lg); padding: 28px;">
+    <div class="card" style="max-width: 420px; width: 100%; box-shadow: var(--shadow-lg); padding: 28px;">
       
       <!-- Brand Header -->
       <div style="text-align: center; margin-bottom: 24px;">
-        <div style="width: 68px; height: 68px; background: linear-gradient(135deg, #00288e, #006c4a); border-radius: 20px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 20px rgba(0,40,142,0.25);">
-          <span class="material-symbols-outlined" style="font-size: 36px;">fingerprint</span>
+        <div style="width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); border-radius: 18px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 20px rgba(0,40,142,0.3);">
+          <span class="material-symbols-outlined" style="font-size: 34px;">fingerprint</span>
         </div>
         <h1 class="font-heading" style="font-size: 24px; font-weight: 800; color: var(--text);">PresensiCore</h1>
-        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Sistem Presensi Biometrik & Portal HRD Terpadu</p>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Enterprise Biometric & Portal Admin HRD</p>
       </div>
 
       <!-- Login Form -->
@@ -595,16 +467,16 @@
 
         <!-- Quick Demo Accounts -->
         <div style="background: var(--surface-low); border: 1px solid var(--outline); border-radius: var(--radius-md); padding: 12px;">
-          <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Pilih Cepat Berdasarkan Role:</span>
+          <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Pilih Akun Cepat:</span>
           <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px;">
-            <button type="button" onclick="fillAccount('admin', 'Admin@2026')" class="btn btn-outline" style="padding: 7px 4px; font-size: 11px; font-weight: 700; color: var(--admin-primary); border-color: var(--admin-primary); background: #f0f4ff;">
-              👑 Admin HRD
+            <button type="button" onclick="fillAccount('admin', 'Admin@2026')" class="btn btn-outline" style="padding: 6px; font-size: 11px; font-weight: 700; color: var(--primary); border-color: var(--primary);">
+              👑 Admin
             </button>
-            <button type="button" onclick="fillAccount('staff', 'Admin@2026')" class="btn btn-outline" style="padding: 7px 4px; font-size: 11px; color: var(--pegawai-primary); border-color: var(--pegawai-primary); background: #f0fdf4;">
-              👤 Dimas (Staff)
+            <button type="button" onclick="fillAccount('staff', 'Admin@2026')" class="btn btn-outline" style="padding: 6px; font-size: 11px;">
+              Dimas
             </button>
-            <button type="button" onclick="fillAccount('rian', 'Admin@2026')" class="btn btn-outline" style="padding: 7px 4px; font-size: 11px; color: var(--pegawai-primary); border-color: var(--pegawai-primary); background: #f0fdf4;">
-              👤 Rian (Staff)
+            <button type="button" onclick="fillAccount('rian', 'Admin@2026')" class="btn btn-outline" style="padding: 6px; font-size: 11px;">
+              Rian
             </button>
           </div>
         </div>
@@ -618,129 +490,101 @@
   </section>
 
   <!-- ========================================== -->
-  <!-- 2A. HEADER KHUSUS ROLE ADMIN -->
+  <!-- 2. GLOBAL APP HEADER (AFTER LOGIN) -->
   <!-- ========================================== -->
-  <header id="headerAdmin" class="app-header header-admin hidden">
+  <header id="globalHeader" class="app-header hidden">
     <div class="header-content">
       
-      <!-- Brand & Admin Indicator -->
+      <!-- Brand & User Profile -->
       <div style="display: flex; align-items: center; gap: 12px;">
-        <div id="adminAvatar" style="width: 40px; height: 40px; border-radius: 12px; background: var(--admin-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; box-shadow: 0 2px 8px rgba(0,40,142,0.3);">
-          AD
+        <div id="headerAvatar" style="width: 40px; height: 40px; border-radius: 12px; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
+          PC
         </div>
         <div>
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <h2 id="adminUserName" class="font-heading" style="font-size: 14px; font-weight: 700; color: var(--text);">Administrator</h2>
-            <span class="badge badge-admin">👑 ADMIN HRD</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <h2 id="headerUserName" class="font-heading" style="font-size: 14px; font-weight: 700; color: var(--text);">User</h2>
+            <span id="headerRoleBadge" class="badge badge-primary">PEGAWAI</span>
           </div>
-          <p id="adminUserNIP" style="font-size: 11px; color: var(--text-muted); font-family: monospace;">NIP: HRD-001</p>
+          <p id="headerUserNIP" style="font-size: 11px; color: var(--text-muted); font-family: monospace;">NIP: ---</p>
         </div>
       </div>
 
-      <!-- Admin Top Menu Tabs (Desktop & Tablet) -->
-      <nav style="display: flex; gap: 4px; background: var(--surface-high); padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--outline);">
-        <button id="adminNavBtnMonitoring" onclick="switchAdminTab('monitoring')" class="tab-btn active" style="padding: 6px 12px; font-size: 11px;">
-          <span class="material-symbols-outlined" style="font-size: 16px;">dashboard</span>
-          <span>Monitoring</span>
+      <!-- Mode Switcher (Visible for Admin Only) -->
+      <div id="adminModeSwitcher" class="hidden" style="display: flex; align-items: center; background: var(--surface-high); padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--outline);">
+        <button id="btnSwitchAdmin" onclick="switchView('admin')" class="btn btn-primary" style="padding: 6px 14px; font-size: 11px; font-weight: 700;">
+          <span class="material-symbols-outlined" style="font-size: 16px;">admin_panel_settings</span>
+          <span>Portal Admin HRD</span>
         </button>
-        <button id="adminNavBtnPegawai" onclick="switchAdminTab('pegawai')" class="tab-btn" style="padding: 6px 12px; font-size: 11px;">
-          <span class="material-symbols-outlined" style="font-size: 16px;">groups</span>
-          <span>Kelola Pegawai</span>
-        </button>
-        <button id="adminNavBtnPengaturan" onclick="switchAdminTab('pengaturan')" class="tab-btn" style="padding: 6px 12px; font-size: 11px;">
-          <span class="material-symbols-outlined" style="font-size: 16px;">settings</span>
-          <span>Setting & Bot</span>
-        </button>
-        <button id="adminNavBtnPresensiSaya" onclick="switchAdminTab('presensi-admin')" class="tab-btn" style="padding: 6px 12px; font-size: 11px;">
+        <button id="btnSwitchPresensi" onclick="switchView('presensi')" class="btn btn-outline" style="padding: 6px 14px; font-size: 11px; border: none; background: transparent;">
           <span class="material-symbols-outlined" style="font-size: 16px;">camera_front</span>
-          <span>Presensi Saya</span>
+          <span>Presensi Mandiri</span>
         </button>
-      </nav>
+      </div>
 
       <!-- Right Trailing -->
       <div style="display: flex; align-items: center; gap: 8px;">
-        <span class="badge badge-success" style="padding: 5px 10px;">
+        <span class="badge badge-success" style="padding: 5px 12px;">
           <span class="pulse-dot" style="margin-right: 4px;"></span>
-          <span>Online</span>
+          <span>GAS V8 Online</span>
         </span>
         <button onclick="handleLogout()" class="btn btn-outline" style="padding: 8px; border-radius: 10px;" title="Keluar / Logout">
-          <span class="material-symbols-outlined" style="font-size: 18px; color: var(--danger);">logout</span>
+          <span class="material-symbols-outlined" style="font-size: 20px; color: var(--danger);">logout</span>
         </button>
       </div>
     </div>
   </header>
 
   <!-- ========================================== -->
-  <!-- 2B. HEADER KHUSUS ROLE PEGAWAI -->
-  <!-- ========================================== -->
-  <header id="headerPegawai" class="app-header header-pegawai hidden">
-    <div class="header-content">
-      
-      <!-- Brand & Pegawai Profile -->
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <div id="pegawaiAvatar" style="width: 40px; height: 40px; border-radius: 12px; background: var(--pegawai-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; box-shadow: 0 2px 8px rgba(0,108,74,0.3);">
-          PG
-        </div>
-        <div>
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <h2 id="pegawaiUserName" class="font-heading" style="font-size: 14px; font-weight: 700; color: var(--text);">Nama Pegawai</h2>
-            <span class="badge badge-pegawai">👤 PEGAWAI</span>
-          </div>
-          <p id="pegawaiUserNIP" style="font-size: 11px; color: var(--text-muted); font-family: monospace;">NIP: ---</p>
-        </div>
-      </div>
-
-      <!-- Right Info & Logout -->
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <div id="pegawaiStatusIndicator" class="badge badge-neutral" style="padding: 5px 10px; font-size: 10px;">
-          Belum Absen
-        </div>
-        <button onclick="handleLogout()" class="btn btn-outline" style="padding: 8px; border-radius: 10px;" title="Keluar / Logout">
-          <span class="material-symbols-outlined" style="font-size: 18px; color: var(--danger);">logout</span>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- ========================================== -->
-  <!-- 3. TAMPILAN KHUSUS ROLE ADMIN (PORTAL HRD) -->
+  <!-- 3. VIEW: PORTAL ADMIN HRD (KHUSUS ADMIN) -->
   <!-- ========================================== -->
   <main id="viewAdminPortal" class="container-admin hidden">
     
-    <!-- Hero Banner Admin -->
-    <div style="background: linear-gradient(135deg, var(--admin-primary), #1e40af, #0f172a); border-radius: var(--radius-xl); padding: 22px 24px; color: #ffffff; box-shadow: var(--shadow-md); margin-bottom: 22px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;">
+    <!-- Hero Banner -->
+    <div style="background: linear-gradient(135deg, var(--primary), #1e40af, #0f172a); border-radius: var(--radius-xl); padding: 24px; color: #ffffff; box-shadow: var(--shadow-md); margin-bottom: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;">
       <div>
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-          <span class="badge" style="background: rgba(254, 240, 138, 0.25); color: #fef08a; border: 1px solid rgba(254, 240, 138, 0.4);">
-            👑 CONSOLE ADMINISTRATOR HRD
-          </span>
-          <span style="font-size: 11px; opacity: 0.8;">| PresensiCore Enterprise</span>
-        </div>
-        <h1 class="font-heading" style="font-size: 24px; font-weight: 800; color: #fff; margin-top: 2px;">
-          Pusat Kendali Presensi & Karyawan
-        </h1>
-        <p style="font-size: 12px; color: rgba(255,255,255,0.85); margin-top: 2px;">
-          Pantau presensi harian secara real-time, audit galeri foto bukti, dan konfigurasi koordinat GPS kantor.
-        </p>
+        <span class="badge badge-primary" style="background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.3); margin-bottom: 6px;">
+          PORTAL KHUSUS ADMINISTRATOR HRD
+        </span>
+        <h1 class="font-heading" style="font-size: 26px; font-weight: 800; color: #fff; margin-top: 4px;">Pusat Kontrol Presensi & Data Pegawai</h1>
+        <p style="font-size: 13px; color: rgba(255,255,255,0.85);">Pantau presensi harian, telusuri galeri foto bukti, dan atur koordinat GPS kantor.</p>
       </div>
       <div>
-        <button onclick="loadAdminDashboard()" class="btn btn-white" style="font-weight: 700; font-size: 12px;">
+        <button onclick="loadAdminDashboard()" class="btn btn-white" style="font-weight: 700;">
           <span class="material-symbols-outlined" style="font-size: 18px;">sync</span>
           <span>Sinkronkan Spreadsheet</span>
         </button>
       </div>
     </div>
 
+    <!-- Admin Sub-Navigation Tabs -->
+    <div class="tab-bar" style="margin-bottom: 24px;">
+      <button id="adminTabBtnRingkasan" onclick="switchAdminTab('ringkasan')" class="tab-btn active">
+        <span class="material-symbols-outlined" style="font-size: 18px;">dashboard</span>
+        <span>Monitoring Presensi Hari Ini</span>
+      </button>
+
+      <button id="adminTabBtnPegawai" onclick="switchAdminTab('pegawai')" class="tab-btn">
+        <span class="material-symbols-outlined" style="font-size: 18px;">group</span>
+        <span>Data Pegawai & Galeri Absen</span>
+        <span id="badgeTotalPegawai" class="badge badge-neutral" style="font-size: 10px; margin-left: 4px;">0</span>
+      </button>
+
+      <button id="adminTabBtnPengaturan" onclick="switchAdminTab('pengaturan')" class="tab-btn">
+        <span class="material-symbols-outlined" style="font-size: 18px;">settings_suggest</span>
+        <span>Setting GPS & Jam Kerja</span>
+      </button>
+    </div>
+
     <!-- ============================================== -->
-    <!-- ADMIN MENU 1: MONITORING HARI INI -->
+    <!-- TAB 1: MONITORING HARI INI -->
     <!-- ============================================== -->
-    <section id="adminTabMonitoring">
+    <section id="adminTabRingkasan">
       <!-- 4 Stat Cards -->
-      <div class="grid-4" style="margin-bottom: 22px;">
+      <div class="grid-4" style="margin-bottom: 24px;">
         <div class="card" style="padding: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; color: var(--text-muted); font-size: 11px; font-weight: 700; text-transform: uppercase;">
             <span>Total Kehadiran</span>
-            <span class="material-symbols-outlined" style="color: var(--admin-primary); font-size: 20px;">how_to_reg</span>
+            <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">how_to_reg</span>
           </div>
           <div style="font-size: 28px; font-weight: 800; color: var(--text); margin-top: 6px;">
             <span id="statHadir">0</span> <span id="statTotalPegawai" style="font-size: 13px; font-weight: 600; color: var(--text-muted);">/ 0</span>
@@ -751,9 +595,9 @@
         <div class="card" style="padding: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; color: var(--text-muted); font-size: 11px; font-weight: 700; text-transform: uppercase;">
             <span>Tepat Waktu</span>
-            <span class="material-symbols-outlined" style="color: var(--pegawai-primary); font-size: 20px;">check_circle</span>
+            <span class="material-symbols-outlined" style="color: var(--secondary); font-size: 20px;">check_circle</span>
           </div>
-          <div style="font-size: 28px; font-weight: 800; color: var(--pegawai-primary); margin-top: 6px;">
+          <div style="font-size: 28px; font-weight: 800; color: var(--secondary); margin-top: 6px;">
             <span id="statTepatWaktu">0</span> <span style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Pegawai</span>
           </div>
           <span class="badge badge-success" style="margin-top: 4px;">Sesuai Batas Jam</span>
@@ -786,7 +630,7 @@
       <div class="card" style="padding: 0; overflow: hidden;">
         <div style="padding: 16px; border-bottom: 1px solid var(--outline); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;">
           <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 400px;">
-            <input type="text" id="adminSearchInput" oninput="filterAdminAbsensiTable()" placeholder="Cari NIP atau nama pegawai..." class="form-input" style="padding: 8px 12px;"/>
+            <input type="text" id="adminSearchInput" oninput="filterAdminAbsensiTable()" placeholder="Cari NIP, nama pegawai..." class="form-input" style="padding: 8px 12px;"/>
           </div>
           <div style="display: flex; gap: 6px;">
             <button onclick="setFilterStatus('all')" id="fltBtnAll" class="btn btn-primary" style="padding: 6px 12px; font-size: 11px;">Semua</button>
@@ -817,18 +661,13 @@
     </section>
 
     <!-- ============================================== -->
-    <!-- ADMIN MENU 2: KELOLA PEGAWAI & GALERI FOTO -->
+    <!-- TAB 2: DATA PEGAWAI & GALERI FOTO ABSEN -->
     <!-- ============================================== -->
     <section id="adminTabPegawai" class="hidden">
       <div class="card" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
         <div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <h2 class="font-heading" style="font-size: 16px; font-weight: 700;">Daftar Master Data Pegawai</h2>
-            <span id="badgeTotalPegawai" class="badge badge-primary" style="font-size: 10px;">0 Pegawai</span>
-          </div>
-          <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
-            Kelola data akun pegawai, reset kredensial, dan telusuri seluruh arsip foto presensi.
-          </p>
+          <h2 class="font-heading" style="font-size: 16px; font-weight: 700;">Daftar Lengkap Nama Pegawai</h2>
+          <p style="font-size: 12px; color: var(--text-muted);">Lihat profil lengkap dan telusuri seluruh arsip gambar foto presensi.</p>
         </div>
         <button onclick="openModalAddPegawai()" class="btn btn-primary">
           <span class="material-symbols-outlined" style="font-size: 18px;">person_add</span>
@@ -842,7 +681,7 @@
     </section>
 
     <!-- ============================================== -->
-    <!-- ADMIN MENU 3: SETTING GPS & JAM KERJA & BOT -->
+    <!-- TAB 3: SETTING GPS & JAM KERJA -->
     <!-- ============================================== -->
     <section id="adminTabPengaturan" class="hidden">
       <div class="grid-2" style="margin-bottom: 20px;">
@@ -850,7 +689,7 @@
         <!-- Setting 1: GPS Kantor -->
         <div class="card">
           <div style="display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--outline); padding-bottom: 14px; margin-bottom: 16px;">
-            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--surface-high); color: var(--admin-primary); display: flex; align-items: center; justify-content: center;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--surface-high); color: var(--primary); display: flex; align-items: center; justify-content: center;">
               <span class="material-symbols-outlined" style="font-size: 24px;">pin_drop</span>
             </div>
             <div>
@@ -881,7 +720,7 @@
 
             <!-- GPS Helper Buttons -->
             <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
-              <button onclick="detectAdminCurrentLocation()" type="button" class="btn btn-outline" style="background: var(--surface-high); font-weight: 700; color: var(--admin-primary); border: none;">
+              <button onclick="detectAdminCurrentLocation()" type="button" class="btn btn-outline" style="background: var(--surface-high); font-weight: 700; color: var(--primary); border: none;">
                 <span class="material-symbols-outlined" style="font-size: 18px;">my_location</span>
                 <span>Gunakan Lokasi GPS Saya Saat Ini</span>
               </button>
@@ -896,7 +735,7 @@
         <!-- Setting 2: Jam Kerja -->
         <div class="card">
           <div style="display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--outline); padding-bottom: 14px; margin-bottom: 16px;">
-            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--surface-high); color: var(--admin-primary); display: flex; align-items: center; justify-content: center;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--surface-high); color: var(--primary); display: flex; align-items: center; justify-content: center;">
               <span class="material-symbols-outlined" style="font-size: 24px;">schedule</span>
             </div>
             <div>
@@ -1010,6 +849,21 @@
                 <span style="font-size: 11px; color: var(--text-muted);">Untuk grup kantor gunakan ID diawali <code>-100...</code> (jadikan bot sebagai Admin grup).</span>
               </div>
             </div>
+
+            <!-- Setup Instruction Guide -->
+            <div style="background: var(--surface-low); border: 1px solid var(--outline); border-radius: var(--radius-md); padding: 12px 16px; font-size: 11px; line-height: 1.6; color: var(--text-muted);">
+              <b style="color: var(--text); display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                <span class="material-symbols-outlined" style="font-size: 16px; color: #0284c7;">info</span>
+                Panduan Praktis Setup Bot Telegram dalam 2 Menit:
+              </b>
+              <ol style="margin-left: 18px;">
+                <li>Buka aplikasi Telegram, cari <b>@BotFather</b>, lalu kirim perintah <code>/newbot</code>. Ikuti instruksi dan beri nama bot Anda. Salin <b>HTTP API Token</b> ke kolom di atas.</li>
+                <li>Buat Grup Telegram bersama pegawai atau admin, lalu undang bot Anda ke dalam grup tersebut dan jadikan sebagai <b>Admin</b>.</li>
+                <li>Untuk mengetahui Chat ID grup: masukkan bot <b>@RawDataBot</b> ke dalam grup, cari baris <code>"id": -100xxxxxxx</code>, lalu salin angka tersebut ke kolom Chat ID di atas (atau chat personal ke bot Anda untuk tahu ID pribadi).</li>
+                <li>Klik tombol <b>Simpan Pengaturan</b>, lalu klik <b>Test Kirim Pesan</b> untuk memverifikasi.</li>
+                <li>Klik tombol <b>Pasang Pemicu (Trigger)</b> agar server Google otomatis memeriksa jam kerja dan mengirim pengingat setiap 15 menit.</li>
+              </ol>
+            </div>
           </div>
         </div>
       </div>
@@ -1025,346 +879,178 @@
         </button>
       </div>
     </section>
-
-    <!-- ============================================== -->
-    <!-- ADMIN MENU 4: PRESENSI MANDIRI KHUSUS ADMIN -->
-    <!-- ============================================== -->
-    <section id="adminTabPresensiSaya" class="hidden">
-      <div style="max-width: 500px; margin: 0 auto;">
-        <div class="card" style="margin-bottom: 16px; background: linear-gradient(135deg, #00288e, #1e40af); color: #fff;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <div style="font-size: 11px; opacity: 0.9;">PRESENSI PRIBADI ADMIN</div>
-              <h2 class="font-heading" style="font-size: 18px; font-weight: 700;">Rekam Kehadiran Administrator</h2>
-            </div>
-            <span class="badge" style="background: rgba(255,255,255,0.2); color: #fff;">Admin Self-Checkin</span>
-          </div>
-        </div>
-        
-        <!-- Inject shared attendance component container for admin -->
-        <div id="adminSelfAttendanceContainer"></div>
-      </div>
-    </section>
-
   </main>
 
   <!-- ========================================== -->
-  <!-- 4. TAMPILAN KHUSUS ROLE PEGAWAI (PORTAL ESS) -->
+  <!-- 4. VIEW: PRESENSI MANDIRI (PEGAWAI & ADMIN) -->
   <!-- ========================================== -->
-  <main id="viewPegawaiPortal" class="container-pegawai hidden">
+  <main id="viewPresensiMandiri" class="container-mobile hidden">
     
-    <!-- Welcome Greeting Card -->
-    <div style="background: linear-gradient(135deg, #006c4a, #005137); color: #ffffff; padding: 20px; border-radius: var(--radius-xl); margin-bottom: 16px; box-shadow: var(--shadow-md);">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+    <!-- Admin Shortcut Banner -->
+    <div id="adminFloatingBanner" class="hidden" style="background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; padding: 14px; border-radius: var(--radius-lg); margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span class="material-symbols-outlined" style="font-size: 24px;">admin_panel_settings</span>
         <div>
-          <span id="pegawaiGreetingTime" style="font-size: 11px; text-transform: uppercase; font-weight: 700; opacity: 0.9; letter-spacing: 0.05em;">
-            Selamat Datang
-          </span>
-          <h1 id="pegawaiGreetingName" class="font-heading" style="font-size: 22px; font-weight: 800; margin-top: 2px;">
-            Halo Pegawai!
-          </h1>
-          <p style="font-size: 12px; opacity: 0.85; margin-top: 4px;">
-            Silakan lakukan presensi kehadiran harian dengan pemindai wajah & GPS kantor.
-          </p>
-        </div>
-        <div style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 12px; padding: 6px 12px; text-align: right;">
-          <div style="font-size: 10px; opacity: 0.9;">HARI INI</div>
-          <div id="pegawaiTodayDateShort" style="font-weight: 800; font-size: 13px;">--/--</div>
+          <div style="font-size: 13px; font-weight: 700;">Portal Admin HRD</div>
+          <div style="font-size: 11px; opacity: 0.85;">Data Pegawai, Galeri Foto & GPS</div>
         </div>
       </div>
-    </div>
-
-    <!-- Pegawai Top Navigation Tabs (Desktop & Tablet) -->
-    <div class="pegawai-nav-tabs">
-      <button id="pegawaiTopTabPresensi" onclick="switchPegawaiTab('presensi')" class="pegawai-tab-btn active">
-        <span class="material-symbols-outlined" style="font-size: 18px;">camera_front</span>
-        <span>Presensi Hari Ini</span>
-      </button>
-      <button id="pegawaiTopTabRiwayat" onclick="switchPegawaiTab('riwayat')" class="pegawai-tab-btn">
-        <span class="material-symbols-outlined" style="font-size: 18px;">history</span>
-        <span>Riwayat Absen</span>
-      </button>
-      <button id="pegawaiTopTabProfil" onclick="switchPegawaiTab('profil')" class="pegawai-tab-btn">
-        <span class="material-symbols-outlined" style="font-size: 18px;">person</span>
-        <span>Profil & Jadwal</span>
+      <button onclick="switchView('admin')" class="btn btn-white" style="padding: 6px 12px; font-size: 11px; font-weight: 700;">
+        <span>Buka Portal</span>
+        <span class="material-symbols-outlined" style="font-size: 14px;">arrow_forward</span>
       </button>
     </div>
 
-    <!-- ============================================== -->
-    <!-- PEGAWAI MENU 1: PRESENSI HARI INI -->
-    <!-- ============================================== -->
-    <section id="pegawaiTabPresensi">
-      <!-- Time & Clock Banner -->
-      <div style="background: var(--surface); border: 1px solid var(--outline); padding: 16px 20px; border-radius: var(--radius-lg); margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm);">
-        <div>
-          <div id="realtimeDate" style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">Memuat Tanggal...</div>
-          <div id="realtimeClock" class="font-heading" style="font-size: 26px; font-weight: 800; color: var(--pegawai-primary); margin-top: 2px;">00:00:00 WIB</div>
+    <!-- Time & Clock Banner -->
+    <div style="background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #ffffff; padding: 18px; border-radius: var(--radius-lg); margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-md);">
+      <div>
+        <div id="realtimeDate" style="font-size: 11px; text-transform: uppercase; font-weight: 600; opacity: 0.9;">Memuat Tanggal...</div>
+        <div id="realtimeClock" class="font-heading" style="font-size: 28px; font-weight: 800; margin-top: 2px;">00:00:00</div>
+      </div>
+      <div>
+        <span id="roleBadge" class="badge" style="background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.3);">PEGAWAI</span>
+      </div>
+    </div>
+
+    <!-- Status Masuk & Pulang -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+      <div class="card-sm">
+        <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-muted);">
+          <span>ABSEN MASUK</span>
+          <span id="badgeMasuk" class="badge badge-neutral">BELUM</span>
         </div>
-        <div style="text-align: right;">
-          <span id="roleBadge" class="badge badge-pegawai">PEGAWAI AKTIF</span>
-        </div>
+        <div id="txtJamMasuk" class="font-heading" style="font-size: 20px; font-weight: 800; margin-top: 4px;">--:--</div>
+        <span id="labelTargetMasuk" style="font-size: 10px; color: var(--text-muted);">Target: &le; 08:00 WIB</span>
       </div>
 
-      <!-- Status Masuk & Pulang -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
-        <div class="card-sm">
-          <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-muted);">
-            <span>ABSEN MASUK</span>
-            <span id="badgeMasuk" class="badge badge-neutral">BELUM</span>
-          </div>
-          <div id="txtJamMasuk" class="font-heading" style="font-size: 20px; font-weight: 800; margin-top: 4px;">--:--</div>
-          <span id="labelTargetMasuk" style="font-size: 10px; color: var(--text-muted);">Target: &le; 08:00 WIB</span>
+      <div class="card-sm">
+        <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-muted);">
+          <span>ABSEN PULANG</span>
+          <span id="badgePulang" class="badge badge-neutral">BELUM</span>
         </div>
-
-        <div class="card-sm">
-          <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-muted);">
-            <span>ABSEN PULANG</span>
-            <span id="badgePulang" class="badge badge-neutral">BELUM</span>
-          </div>
-          <div id="txtJamPulang" class="font-heading" style="font-size: 20px; font-weight: 800; margin-top: 4px;">--:--</div>
-          <span id="labelTargetPulang" style="font-size: 10px; color: var(--text-muted);">Target: &ge; 17:00 WIB</span>
-        </div>
+        <div id="txtJamPulang" class="font-heading" style="font-size: 20px; font-weight: 800; margin-top: 4px;">--:--</div>
+        <span id="labelTargetPulang" style="font-size: 10px; color: var(--text-muted);">Target: &ge; 17:00 WIB</span>
       </div>
+    </div>
 
-      <!-- Geofence & GPS Card -->
-      <div class="card" style="margin-bottom: 14px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--outline); padding-bottom: 10px; margin-bottom: 12px;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span class="material-symbols-outlined" style="color: var(--pegawai-primary);">near_me</span>
-            <div>
-              <div style="font-size: 13px; font-weight: 700;">Validasi Geofence Kantor</div>
-              <div style="font-size: 10px; color: var(--text-muted);">Haversine Formula Satelit GPS</div>
-            </div>
-          </div>
-          <span id="geofenceBadge" class="badge badge-neutral">Cek GPS...</span>
-        </div>
-
-        <div style="background: var(--surface-low); border: 1px solid var(--outline); border-radius: var(--radius-md); padding: 10px; font-size: 12px; display: flex; flex-direction: column; gap: 4px;">
-          <div style="display: flex; justify-content: space-between;">
-            <span style="color: var(--text-muted);">Jarak ke Posko Kantor:</span>
-            <span id="txtDistance" style="font-weight: 700; font-family: monospace;">Mendeteksi...</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted);">
-            <span>Koordinat Anda:</span>
-            <span id="txtCoordinates" style="font-family: monospace;">-</span>
-          </div>
-        </div>
-
-        <button onclick="refreshGPS()" type="button" class="btn btn-outline" style="width: 100%; margin-top: 10px; font-size: 11px;">
-          <span class="material-symbols-outlined" style="font-size: 16px;">my_location</span>
-          <span>Perbarui Akurasi GPS Sekarang</span>
-        </button>
-      </div>
-
-      <!-- Biometric Camera Card -->
-      <div class="card" style="margin-bottom: 14px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span class="material-symbols-outlined" style="color: var(--pegawai-primary);">face</span>
-            <div>
-              <div style="font-size: 13px; font-weight: 700;">Pemindaian Wajah Biometrik</div>
-              <div style="font-size: 10px; color: var(--text-muted);">Real-time Liveness Check</div>
-            </div>
-          </div>
-          <span id="livenessScoreBadge" class="badge badge-success">Liveness: 96%</span>
-        </div>
-
-        <!-- Viewfinder -->
-        <div style="position: relative; width: 100%; aspect-ratio: 4/3; background: #0f172a; border-radius: var(--radius-md); overflow: hidden; display: flex; align-items: center; justify-content: center; border: 2px solid var(--outline);">
-          <video id="cameraVideo" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover;"></video>
-          <canvas id="cameraCanvas" style="display: none;"></canvas>
-
-          <div class="laser-line"></div>
-
-          <!-- Face Guide Frame -->
-          <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;">
-            <div style="width: 160px; height: 210px; border-radius: 50%; border: 2px dashed rgba(133, 248, 196, 0.85); box-shadow: 0 0 20px rgba(0,108,74,0.3);"></div>
-          </div>
-
-          <!-- Placeholder when camera inactive -->
-          <div id="cameraPlaceholder" class="hidden" style="position: absolute; inset: 0; background: rgba(15,23,42,0.92); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #fff; text-align: center; padding: 16px;">
-            <span class="material-symbols-outlined" style="font-size: 36px; color: var(--outline);">videocam_off</span>
-            <span style="font-size: 11px;">Kamera tidak aktif. Klik tombol untuk mengaktifkan.</span>
-            <button onclick="startCamera()" class="btn btn-pegawai" style="padding: 6px 14px; font-size: 11px;">Aktifkan Kamera</button>
-          </div>
-        </div>
-
-        <div style="display: flex; gap: 8px; margin-top: 10px;">
-          <button onclick="startCamera()" type="button" class="btn btn-outline" style="flex: 1; font-size: 11px;">
-            <span class="material-symbols-outlined" style="font-size: 16px;">videocam</span>
-            <span>Segarkan Kamera</span>
-          </button>
-          <button onclick="testLiveness()" type="button" class="btn btn-outline" style="font-size: 11px;">
-            <span class="material-symbols-outlined" style="font-size: 16px;">verified</span>
-            <span>Uji Liveness</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Action Presensi Buttons -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-        <button id="btnAbsenMasuk" onclick="submitPresensi('masuk')" class="btn btn-pegawai" style="padding: 16px 12px; font-size: 14px; flex-direction: column; gap: 4px;">
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <span class="material-symbols-outlined" style="font-size: 20px;">login</span>
-            <span>Absen Masuk</span>
-          </div>
-          <span style="font-size: 10px; font-weight: 400; opacity: 0.9;">Simpan Waktu & GPS</span>
-        </button>
-
-        <button id="btnAbsenPulang" onclick="submitPresensi('pulang')" class="btn btn-primary" style="padding: 16px 12px; font-size: 14px; flex-direction: column; gap: 4px; background: #0284c7;">
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <span class="material-symbols-outlined" style="font-size: 20px;">logout</span>
-            <span>Absen Pulang</span>
-          </div>
-          <span style="font-size: 10px; font-weight: 400; opacity: 0.9;">Selesai Jam Kerja</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- ============================================== -->
-    <!-- PEGAWAI MENU 2: RIWAYAT ABSENSI SAYA -->
-    <!-- ============================================== -->
-    <section id="pegawaiTabRiwayat" class="hidden">
-      <!-- Personal Statistics Cards -->
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">
-        <div class="card-sm" style="text-align: center; padding: 12px 8px;">
-          <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Kehadiran</div>
-          <div id="pegawaiStatTotalHadir" class="font-heading" style="font-size: 22px; font-weight: 800; color: var(--pegawai-primary); margin-top: 2px;">0</div>
-          <div style="font-size: 10px; color: var(--text-muted);">Bulan Ini</div>
-        </div>
-
-        <div class="card-sm" style="text-align: center; padding: 12px 8px;">
-          <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Tepat Waktu</div>
-          <div id="pegawaiStatTepatWaktu" class="font-heading" style="font-size: 22px; font-weight: 800; color: #0284c7; margin-top: 2px;">0</div>
-          <div style="font-size: 10px; color: var(--text-muted);">Sesuai Jadwal</div>
-        </div>
-
-        <div class="card-sm" style="text-align: center; padding: 12px 8px;">
-          <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Terlambat</div>
-          <div id="pegawaiStatTerlambat" class="font-heading" style="font-size: 22px; font-weight: 800; color: var(--warning); margin-top: 2px;">0</div>
-          <div style="font-size: 10px; color: var(--text-muted);">Lewat Jam</div>
-        </div>
-      </div>
-
-      <!-- History Records Card -->
-      <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--outline); padding-bottom: 10px; margin-bottom: 12px;">
-          <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700;">
-            <span class="material-symbols-outlined" style="color: var(--pegawai-primary); font-size: 18px;">event_note</span>
-            <span>Daftar Log Presensi Pribadi</span>
-          </div>
-          <button onclick="loadHistoryData()" class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; border: none;">
-            <span class="material-symbols-outlined" style="font-size: 14px;">refresh</span>
-            <span>Segarkan</span>
-          </button>
-        </div>
-
-        <div id="pegawaiHistoryDetailedList" style="display: flex; flex-direction: column; gap: 10px;">
-          <div style="text-align: center; padding: 24px; font-size: 12px; color: var(--text-muted);">Memuat riwayat kehadiran...</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================================== -->
-    <!-- PEGAWAI MENU 3: PROFIL & JADWAL KERJA -->
-    <!-- ============================================== -->
-    <section id="pegawaiTabProfil" class="hidden">
-      <!-- Profile Card -->
-      <div class="card" style="margin-bottom: 16px;">
-        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px; border-bottom: 1px solid var(--outline); padding-bottom: 16px;">
-          <div id="profilAvatarLarge" style="width: 56px; height: 56px; border-radius: 16px; background: var(--pegawai-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px;">
-            PG
-          </div>
+    <!-- Geofence & GPS Card -->
+    <div class="card" style="margin-bottom: 14px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--outline); padding-bottom: 10px; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="material-symbols-outlined" style="color: var(--primary);">near_me</span>
           <div>
-            <h2 id="profilFullName" class="font-heading" style="font-size: 16px; font-weight: 700; color: var(--text);">Nama Pegawai</h2>
-            <div id="profilNIP" style="font-size: 12px; color: var(--text-muted); font-family: monospace;">NIP: ---</div>
-            <div style="display: flex; gap: 6px; margin-top: 4px;">
-              <span class="badge badge-pegawai">Pegawai</span>
-              <span class="badge badge-success">Status: Aktif</span>
-            </div>
+            <div style="font-size: 13px; font-weight: 700;">Validasi Geofence Kantor</div>
+            <div style="font-size: 10px; color: var(--text-muted);">Haversine Formula GPS</div>
           </div>
         </div>
+        <span id="geofenceBadge" class="badge badge-neutral">Cek GPS...</span>
+      </div>
 
-        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px;">
-          <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed var(--outline); padding-bottom: 6px;">
-            <span style="color: var(--text-muted);">Username Akun:</span>
-            <b id="profilUsername" style="font-family: monospace;">-</b>
-          </div>
-          <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed var(--outline); padding-bottom: 6px;">
-            <span style="color: var(--text-muted);">Unit Kerja:</span>
-            <span>Divisi Operasional Lapangan</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; padding-bottom: 2px;">
-            <span style="color: var(--text-muted);">Sistem Presensi:</span>
-            <span>Biometrik & Geofence GPS</span>
-          </div>
+      <div style="background: var(--surface-low); border: 1px solid var(--outline); border-radius: var(--radius-md); padding: 10px; font-size: 12px; display: flex; flex-direction: column; gap: 4px;">
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted);">Jarak ke Posko Utama:</span>
+          <span id="txtDistance" style="font-weight: 700; font-family: monospace;">Mendeteksi...</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted);">
+          <span>Koordinat Pengguna:</span>
+          <span id="txtCoordinates" style="font-family: monospace;">-</span>
         </div>
       </div>
 
-      <!-- Schedule Rules Card -->
-      <div class="card" style="margin-bottom: 16px;">
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px; border-bottom: 1px solid var(--outline); padding-bottom: 10px;">
-          <span class="material-symbols-outlined" style="color: var(--pegawai-primary); font-size: 20px;">schedule</span>
-          <h3 class="font-heading" style="font-size: 14px; font-weight: 700;">Ketentuan Jam Kerja Resmi</h3>
+      <button onclick="refreshGPS()" type="button" class="btn btn-outline" style="width: 100%; margin-top: 10px; font-size: 11px;">
+        <span class="material-symbols-outlined" style="font-size: 16px;">my_location</span>
+        <span>Perbarui Akurasi GPS Sekarang</span>
+      </button>
+    </div>
+
+    <!-- Biometric Camera Card -->
+    <div class="card" style="margin-bottom: 14px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="material-symbols-outlined" style="color: var(--primary);">face</span>
+          <div>
+            <div style="font-size: 13px; font-weight: 700;">Pemindaian Wajah Biometrik</div>
+            <div style="font-size: 10px; color: var(--text-muted);">Real-time Anti-Spoofing</div>
+          </div>
+        </div>
+        <span id="livenessScoreBadge" class="badge badge-success">Liveness: 96%</span>
+      </div>
+
+      <!-- Viewfinder -->
+      <div style="position: relative; width: 100%; aspect-ratio: 4/3; background: #0f172a; border-radius: var(--radius-md); overflow: hidden; display: flex; align-items: center; justify-content: center; border: 2px solid var(--primary-container);">
+        <video id="cameraVideo" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover;"></video>
+        <canvas id="cameraCanvas" style="display: none;"></canvas>
+
+        <div class="laser-line"></div>
+
+        <!-- Face Guide Frame -->
+        <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;">
+          <div style="width: 160px; height: 210px; border-radius: 50%; border: 2px dashed rgba(221,225,255,0.85); box-shadow: 0 0 20px rgba(0,40,142,0.3);"></div>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface-low); padding: 10px; border-radius: var(--radius-md);">
-            <div>
-              <div style="font-weight: 700;">Batas Maksimal Jam Masuk</div>
-              <div style="font-size: 10px; color: var(--text-muted);">Toleransi keterlambatan 15 menit</div>
-            </div>
-            <span id="profilJamMasuk" class="badge badge-primary" style="font-size: 12px; font-family: monospace;">08:00 WIB</span>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface-low); padding: 10px; border-radius: var(--radius-md);">
-            <div>
-              <div style="font-weight: 700;">Batas Minimal Jam Pulang</div>
-              <div style="font-size: 10px; color: var(--text-muted);">Dapat absen pulang setelah jam ini</div>
-            </div>
-            <span id="profilJamPulang" class="badge badge-success" style="font-size: 12px; font-family: monospace;">17:00 WIB</span>
-          </div>
+        <!-- Placeholder when camera inactive -->
+        <div id="cameraPlaceholder" class="hidden" style="position: absolute; inset: 0; background: rgba(15,23,42,0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #fff; text-align: center; padding: 16px;">
+          <span class="material-symbols-outlined" style="font-size: 36px; color: var(--outline);">videocam_off</span>
+          <span style="font-size: 11px;">Kamera tidak aktif. Klik tombol untuk mengaktifkan.</span>
+          <button onclick="startCamera()" class="btn btn-primary" style="padding: 6px 14px; font-size: 11px;">Aktifkan Kamera</button>
         </div>
       </div>
 
-      <!-- Office Geofence Info Card -->
-      <div class="card">
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-          <span class="material-symbols-outlined" style="color: var(--pegawai-primary); font-size: 20px;">location_on</span>
-          <h3 class="font-heading" style="font-size: 14px; font-weight: 700;">Titik Posko Kantor Resmi</h3>
-        </div>
-        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
-          Presensi wajib dilakukan di dalam radius toleransi kantor (<b id="profilRadius">50</b> meter dari koordinat Posko). 
-          Pastikan fitur GPS di perangkat Anda aktif dengan akurasi tinggi sebelum mengambil foto presensi.
-        </p>
+      <div style="display: flex; gap: 8px; margin-top: 10px;">
+        <button onclick="startCamera()" type="button" class="btn btn-outline" style="flex: 1; font-size: 11px;">
+          <span class="material-symbols-outlined" style="font-size: 16px;">videocam</span>
+          <span>Segarkan Kamera</span>
+        </button>
+        <button onclick="testLiveness()" type="button" class="btn btn-outline" style="font-size: 11px;">
+          <span class="material-symbols-outlined" style="font-size: 16px;">verified</span>
+          <span>Uji Liveness</span>
+        </button>
       </div>
-    </section>
+    </div>
 
-    <!-- Mobile Bottom Navigation Bar ( khusus Pegawai ) -->
-    <nav id="pegawaiBottomNav" class="bottom-nav">
-      <button id="bNavPresensi" onclick="switchPegawaiTab('presensi')" class="bottom-nav-item active">
-        <span class="material-symbols-outlined">camera_front</span>
-        <span>Presensi</span>
+    <!-- Action Presensi Buttons -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+      <button id="btnAbsenMasuk" onclick="submitPresensi('masuk')" class="btn btn-secondary" style="padding: 16px 12px; font-size: 14px; flex-direction: column; gap: 4px;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span class="material-symbols-outlined" style="font-size: 20px;">login</span>
+          <span>Absen Masuk</span>
+        </div>
+        <span style="font-size: 10px; font-weight: 400; opacity: 0.9;">Simpan Waktu & GPS</span>
       </button>
-      <button id="bNavRiwayat" onclick="switchPegawaiTab('riwayat')" class="bottom-nav-item">
-        <span class="material-symbols-outlined">history</span>
-        <span>Riwayat</span>
+
+      <button id="btnAbsenPulang" onclick="submitPresensi('pulang')" class="btn btn-primary" style="padding: 16px 12px; font-size: 14px; flex-direction: column; gap: 4px;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span class="material-symbols-outlined" style="font-size: 20px;">logout</span>
+          <span>Absen Pulang</span>
+        </div>
+        <span style="font-size: 10px; font-weight: 400; opacity: 0.9;">Selesai Kerja</span>
       </button>
-      <button id="bNavProfil" onclick="switchPegawaiTab('profil')" class="bottom-nav-item">
-        <span class="material-symbols-outlined">person</span>
-        <span>Profil</span>
-      </button>
-    </nav>
+    </div>
+
+    <!-- Recent History -->
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--outline); padding-bottom: 10px; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700;">
+          <span class="material-symbols-outlined" style="color: var(--text-muted); font-size: 18px;">history</span>
+          <span>Riwayat Presensi Terakhir</span>
+        </div>
+        <button onclick="loadHistoryData()" class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; border: none;">Segarkan</button>
+      </div>
+
+      <div id="historyList" style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="text-align: center; padding: 16px; font-size: 11px; color: var(--text-muted);">Memuat riwayat...</div>
+      </div>
+    </div>
   </main>
 
   <!-- ========================================== -->
-  <!-- MODAL: DETAIL PEGAWAI & GALERI FOTO ABSEN (ADMIN) -->
+  <!-- MODAL: DETAIL PEGAWAI & GALERI FOTO ABSEN -->
   <!-- ========================================== -->
   <div id="modalPegawaiDetail" class="modal-overlay hidden">
     <div class="modal-content">
       <div style="padding: 16px 20px; border-bottom: 1px solid var(--outline); display: flex; justify-content: space-between; align-items: center; background: var(--surface-low);">
         <div style="display: flex; align-items: center; gap: 12px;">
-          <div id="modalPegawaiAvatar" style="width: 40px; height: 40px; border-radius: 12px; background: var(--admin-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
+          <div id="modalPegawaiAvatar" style="width: 40px; height: 40px; border-radius: 12px; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
             PE
           </div>
           <div>
@@ -1382,11 +1068,11 @@
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;">
           <div class="card-sm" style="padding: 10px;">
             <div style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Role</div>
-            <div id="modalPegawaiRole" style="font-weight: 700; font-size: 12px; color: var(--admin-primary);">Pegawai</div>
+            <div id="modalPegawaiRole" style="font-weight: 700; font-size: 12px; color: var(--primary);">Pegawai</div>
           </div>
           <div class="card-sm" style="padding: 10px;">
             <div style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Status</div>
-            <div id="modalPegawaiStatus" style="font-weight: 700; font-size: 12px; color: var(--pegawai-primary);">Aktif</div>
+            <div id="modalPegawaiStatus" style="font-weight: 700; font-size: 12px; color: var(--secondary);">Aktif</div>
           </div>
         </div>
 
@@ -1410,7 +1096,7 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- MODAL: TAMBAH PEGAWAI BARU (ADMIN) -->
+  <!-- MODAL: TAMBAH PEGAWAI BARU -->
   <!-- ========================================== -->
   <div id="modalAddPegawai" class="modal-overlay hidden">
     <div class="modal-content" style="max-width: 450px;">
@@ -1472,7 +1158,7 @@
       <div style="width: 100%; background: #000; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
         <img id="zoomPhotoImage" src="" alt="Bukti Presensi" style="max-height: 60vh; max-width: 100%; object-fit: contain;"/>
       </div>
-      <div style="margin-top: 10px; font-size: 11px; color: #94a3b8; display: flex; justify-content: space-between; align-items: center;">
+      <div style="margin-top: 10px; font-size: 11px; color: #94a3b8; display: flex; justify-content: space-between;">
         <span id="zoomPhotoMetadata">Waktu: - | Jarak: -</span>
         <span id="zoomPhotoLiveness" class="badge badge-success">OK</span>
       </div>
@@ -1486,6 +1172,7 @@
     // System State
     var currentUser = null;
     var sessionToken = null;
+    var currentActiveView = 'presensi';
     var currentCoords = { lat: -6.208850, lng: 106.845620 };
     var systemSettings = {
       radius: 50,
@@ -1528,33 +1215,13 @@
         var dateEl = document.getElementById('realtimeDate');
         if (clockEl) clockEl.innerText = timeStr + ' WIB';
         if (dateEl) dateEl.innerText = dateStr;
-
-        var shortDateEl = document.getElementById('pegawaiTodayDateShort');
-        if (shortDateEl) {
-          shortDateEl.innerText = ('0' + now.getDate()).slice(-2) + '/' + ('0' + (now.getMonth() + 1)).slice(-2);
-        }
       } catch (err) {
         console.warn('Clock update error:', err);
       }
     }
     setInterval(updateClock, 1000);
 
-    // Dynamic Greeting based on time
-    function updatePegawaiGreeting() {
-      if (!currentUser) return;
-      var hour = new Date().getHours();
-      var greeting = 'Selamat Pagi';
-      if (hour >= 11 && hour < 15) greeting = 'Selamat Siang';
-      else if (hour >= 15 && hour < 18) greeting = 'Selamat Sore';
-      else if (hour >= 18 || hour < 4) greeting = 'Selamat Malam';
-
-      var gTimeEl = document.getElementById('pegawaiGreetingTime');
-      var gNameEl = document.getElementById('pegawaiGreetingName');
-      if (gTimeEl) gTimeEl.innerText = greeting.toUpperCase();
-      if (gNameEl) gNameEl.innerText = (currentUser.fullname || currentUser.username) + ' 👋';
-    }
-
-    // App Initialization
+    // Guaranteed App Initialization (handles iframe readyState)
     var isAppInitialized = false;
     function initApp() {
       if (isAppInitialized) return;
@@ -1637,7 +1304,7 @@
     }
 
     // ==========================================
-    // BACKEND RUNNER & OFFLINE SIMULATION MOCK
+    // BACKEND RUNNER & OFFLINE PREVIEW MOCK
     // ==========================================
     function callBackend(functionName, args, onSuccess, onFailure) {
       if (typeof google !== 'undefined' && google.script && google.script.run) {
@@ -1653,7 +1320,7 @@
         console.warn('Mode Preview/Simulasi: GAS tidak terdeteksi.');
         setTimeout(function() {
           handleLocalMock(functionName, args, onSuccess, onFailure);
-        }, 350);
+        }, 500);
       }
     }
 
@@ -1684,9 +1351,8 @@
             pengaturan: systemSettings,
             status: { masuk: false, pulang: false, jamMasuk: '--:--', jamPulang: '--:--' },
             history: [
-              { tanggal: '2026-10-21', jamMasuk: '07:45:12', jamPulang: '17:05:30', status: 'Hadir', jarak: 14, statusGeofence: 'VALID', fotoBukti: '' },
-              { tanggal: '2026-10-20', jamMasuk: '07:50:00', jamPulang: '17:00:22', status: 'Hadir', jarak: 18, statusGeofence: 'VALID', fotoBukti: '' },
-              { tanggal: '2026-10-19', jamMasuk: '08:12:00', jamPulang: '17:02:15', status: 'Terlambat', jarak: 22, statusGeofence: 'VALID', fotoBukti: '' }
+              { tanggal: '2026-10-20', jamMasuk: '07:45:12', jamPulang: '17:05:30', status: 'Hadir', fotoBukti: '' },
+              { tanggal: '2026-10-19', jamMasuk: '07:50:00', jamPulang: '17:00:22', status: 'Hadir', fotoBukti: '' }
             ]
           }
         });
@@ -1734,18 +1400,10 @@
             pegawai: { id: 'u2', username: 'staff', fullname: 'Dimas Setiawan', nip: nip, role: 'Pegawai', status: 'Aktif' },
             riwayat: [
               { id_absen: 'h1', tanggal: '2026-10-21', jam_masuk: '08:04:12', jam_pulang: '--:--', jarak_meter: 14, status_geofence: 'VALID', status_liveness: 'OK', foto_bukti: '' },
-              { id_absen: 'h2', tanggal: '2026-10-20', jam_masuk: '07:55:00', jam_pulang: '17:02:10', jarak_meter: 18, status_geofence: 'VALID', status_liveness: 'OK', foto_bukti: '' }
+              { id_absen: 'h2', tanggal: '2026-10-20', jam_masuk: '07:55:00', jam_pulang: '17:02:10', jarak_meter: 18, status_geofence: 'VALID', status_liveness: 'OK', foto_bukti: '' },
+              { id_absen: 'h3', tanggal: '2026-10-19', jam_masuk: '07:48:30', jam_pulang: '17:00:15', jarak_meter: 12, status_geofence: 'VALID', status_liveness: 'OK', foto_bukti: '' }
             ]
           }
-        });
-      } else if (functionName === 'getFullHistory') {
-        onSuccess({
-          success: true,
-          data: [
-            { tanggal: '2026-10-21', jamMasuk: '07:45:12', jamPulang: '17:05:30', status: 'Hadir', jarak: 14, statusGeofence: 'VALID', fotoBukti: '' },
-            { tanggal: '2026-10-20', jamMasuk: '07:50:00', jamPulang: '17:00:22', status: 'Hadir', jarak: 18, statusGeofence: 'VALID', fotoBukti: '' },
-            { tanggal: '2026-10-19', jamMasuk: '08:12:00', jamPulang: '17:02:15', status: 'Terlambat', jarak: 22, statusGeofence: 'VALID', fotoBukti: '' }
-          ]
         });
       } else if (functionName === 'updateSystemSettings') {
         systemSettings = Object.assign(systemSettings, args[1]);
@@ -1764,7 +1422,7 @@
     }
 
     // ==========================================
-    // AUTHENTICATION & ROLE ROUTING
+    // AUTHENTICATION
     // ==========================================
     function handleLogin(e) {
       e.preventDefault();
@@ -1811,139 +1469,121 @@
         sessionToken = null;
         stopCamera();
         showLoginScreen();
-        showToast('Anda telah keluar dari akun.', 'info');
+        showToast('Anda telah logout.', 'info');
       }
     }
 
     function showLoginScreen() {
       document.getElementById('loginScreen').classList.remove('hidden');
-      document.getElementById('headerAdmin').classList.add('hidden');
-      document.getElementById('headerPegawai').classList.add('hidden');
+      document.getElementById('globalHeader').classList.add('hidden');
       document.getElementById('viewAdminPortal').classList.add('hidden');
-      document.getElementById('viewPegawaiPortal').classList.add('hidden');
+      document.getElementById('viewPresensiMandiri').classList.add('hidden');
     }
 
-    /**
-     * Differentiate Setup UI based on Role:
-     * - Role Admin -> Header Admin & View Admin Portal (Widescreen, Enterprise Dashboard)
-     * - Role Pegawai -> Header Pegawai & View Pegawai Portal (Mobile/Desktop ESS, Attendance, History, Profile)
-     */
     function setupSessionUI() {
       document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('globalHeader').classList.remove('hidden');
+
+      // Header Info
+      document.getElementById('headerUserName').innerText = currentUser.fullname || currentUser.username;
+      document.getElementById('headerUserNIP').innerText = 'NIP: ' + (currentUser.nip || '-');
+      document.getElementById('headerRoleBadge').innerText = (currentUser.role || 'PEGAWAI').toUpperCase();
+      var initials = (currentUser.fullname || currentUser.username).substring(0, 2).toUpperCase();
+      document.getElementById('headerAvatar').innerText = initials;
+
+      var adminSwitcher = document.getElementById('adminModeSwitcher');
+      var adminFloatingBanner = document.getElementById('adminFloatingBanner');
       var isAdmin = isAdminUser(currentUser);
 
       if (isAdmin) {
-        // 1. ACTIVATE ADMIN VIEW & MENUS
-        document.getElementById('headerAdmin').classList.remove('hidden');
-        document.getElementById('headerPegawai').classList.add('hidden');
-        document.getElementById('viewAdminPortal').classList.remove('hidden');
-        document.getElementById('viewPegawaiPortal').classList.add('hidden');
+        if (adminSwitcher) {
+          adminSwitcher.classList.remove('hidden');
+        }
+        if (adminFloatingBanner) {
+          adminFloatingBanner.classList.remove('hidden');
+        }
+        switchView('admin');
+      } else {
+        if (adminSwitcher) {
+          adminSwitcher.classList.add('hidden');
+        }
+        if (adminFloatingBanner) {
+          adminFloatingBanner.classList.add('hidden');
+        }
+        switchView('presensi');
+      }
+    }
 
-        // Populate Admin Details
-        document.getElementById('adminUserName').innerText = currentUser.fullname || currentUser.username;
-        document.getElementById('adminUserNIP').innerText = 'NIP: ' + (currentUser.nip || 'HRD-001');
-        var initials = (currentUser.fullname || currentUser.username).substring(0, 2).toUpperCase();
-        document.getElementById('adminAvatar').innerText = initials;
+    function switchView(viewName) {
+      currentActiveView = viewName;
+      var isAdmin = isAdminUser(currentUser);
+      var btnAdmin = document.getElementById('btnSwitchAdmin');
+      var btnPresensi = document.getElementById('btnSwitchPresensi');
+      var viewAdmin = document.getElementById('viewAdminPortal');
+      var viewPresensi = document.getElementById('viewPresensiMandiri');
 
-        switchAdminTab('monitoring');
+      if (viewName === 'admin' && isAdmin) {
+        viewAdmin.classList.remove('hidden');
+        viewPresensi.classList.add('hidden');
+        stopCamera();
+
+        if (btnAdmin && btnPresensi) {
+          btnAdmin.className = "btn btn-primary";
+          btnPresensi.className = "btn btn-outline";
+          btnPresensi.style.border = 'none';
+          btnPresensi.style.background = 'transparent';
+        }
+        
         loadAdminDashboard();
       } else {
-        // 2. ACTIVATE PEGAWAI VIEW & MENUS
-        document.getElementById('headerAdmin').classList.add('hidden');
-        document.getElementById('headerPegawai').classList.remove('hidden');
-        document.getElementById('viewAdminPortal').classList.add('hidden');
-        document.getElementById('viewPegawaiPortal').classList.remove('hidden');
+        viewAdmin.classList.add('hidden');
+        viewPresensi.classList.remove('hidden');
 
-        // Populate Pegawai Details
-        document.getElementById('pegawaiUserName').innerText = currentUser.fullname || currentUser.username;
-        document.getElementById('pegawaiUserNIP').innerText = 'NIP: ' + (currentUser.nip || '-');
-        var pInitials = (currentUser.fullname || currentUser.username).substring(0, 2).toUpperCase();
-        document.getElementById('pegawaiAvatar').innerText = pInitials;
-        document.getElementById('profilAvatarLarge').innerText = pInitials;
+        if (btnAdmin && btnPresensi) {
+          btnPresensi.className = "btn btn-primary";
+          btnAdmin.className = "btn btn-outline";
+          btnAdmin.style.border = 'none';
+          btnAdmin.style.background = 'transparent';
+        }
 
-        // Populate Profile Tab
-        document.getElementById('profilFullName').innerText = currentUser.fullname || currentUser.username;
-        document.getElementById('profilNIP').innerText = 'NIP: ' + (currentUser.nip || '-');
-        document.getElementById('profilUsername').innerText = '@' + (currentUser.username || '-');
-
-        updatePegawaiGreeting();
-        switchPegawaiTab('presensi');
+        initGeolocation();
+        startCamera();
         loadDashboardData();
       }
     }
 
     // ==========================================
-    // ROLE 1: ADMIN PORTAL SUB-NAV MENUS
+    // ADMIN PORTAL LOGIC & SUB-TABS
     // ==========================================
     function switchAdminTab(tabName) {
-      var tabMonitoring = document.getElementById('adminTabMonitoring');
+      var tabRingkasan = document.getElementById('adminTabRingkasan');
       var tabPegawai = document.getElementById('adminTabPegawai');
       var tabPengaturan = document.getElementById('adminTabPengaturan');
-      var tabPresensiSaya = document.getElementById('adminTabPresensiSaya');
 
-      var btnM = document.getElementById('adminNavBtnMonitoring');
-      var btnP = document.getElementById('adminNavBtnPegawai');
-      var btnS = document.getElementById('adminNavBtnPengaturan');
-      var btnPS = document.getElementById('adminNavBtnPresensiSaya');
+      var btnR = document.getElementById('adminTabBtnRingkasan');
+      var btnP = document.getElementById('adminTabBtnPegawai');
+      var btnS = document.getElementById('adminTabBtnPengaturan');
 
-      tabMonitoring.classList.add('hidden');
+      tabRingkasan.classList.add('hidden');
       tabPegawai.classList.add('hidden');
       tabPengaturan.classList.add('hidden');
-      tabPresensiSaya.classList.add('hidden');
 
-      btnM.classList.remove('active');
+      btnR.classList.remove('active');
       btnP.classList.remove('active');
       btnS.classList.remove('active');
-      btnPS.classList.remove('active');
 
-      if (tabName === 'monitoring') {
-        tabMonitoring.classList.remove('hidden');
-        btnM.classList.add('active');
-        stopCamera();
+      if (tabName === 'ringkasan') {
+        tabRingkasan.classList.remove('hidden');
+        btnR.classList.add('active');
       } else if (tabName === 'pegawai') {
         tabPegawai.classList.remove('hidden');
         btnP.classList.add('active');
-        stopCamera();
         renderAdminPegawaiGrid();
       } else if (tabName === 'pengaturan') {
         tabPengaturan.classList.remove('hidden');
         btnS.classList.add('active');
-        stopCamera();
         populateSettingsInputs();
-      } else if (tabName === 'presensi-admin') {
-        tabPresensiSaya.classList.remove('hidden');
-        btnPS.classList.add('active');
-        renderAdminSelfAttendance();
       }
-    }
-
-    function renderAdminSelfAttendance() {
-      // Clone or move presensi component for admin self-checkin
-      var container = document.getElementById('adminSelfAttendanceContainer');
-      container.innerHTML = '<div class="card" style="text-align: center; padding: 24px;">' +
-        '<div style="font-size: 13px; font-weight: 700; color: var(--admin-primary); margin-bottom: 6px;">Mode Presensi Mandiri Admin</div>' +
-        '<p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Sebagai Admin HRD, Anda dapat berganti ke tampilan antarmuka pegawai untuk melakukan presensi foto & GPS mandiri.</p>' +
-        '<button onclick="switchRoleViewToPegawai()" class="btn btn-pegawai" style="margin: 0 auto;">' +
-          '<span class="material-symbols-outlined">camera_front</span>' +
-          '<span>Buka Layar Presensi Saya</span>' +
-        '</button>' +
-      '</div>';
-    }
-
-    function switchRoleViewToPegawai() {
-      document.getElementById('headerAdmin').classList.add('hidden');
-      document.getElementById('headerPegawai').classList.remove('hidden');
-      document.getElementById('viewAdminPortal').classList.add('hidden');
-      document.getElementById('viewPegawaiPortal').classList.remove('hidden');
-
-      // Add shortcut to return back to Admin
-      var greetingDiv = document.getElementById('pegawaiGreetingTime');
-      if (greetingDiv) {
-        greetingDiv.innerHTML = '<a href="javascript:setupSessionUI()" style="color:#fff; text-decoration:underline; font-weight:800;">&larr; Kembali ke Portal Admin</a>';
-      }
-
-      switchPegawaiTab('presensi');
-      loadDashboardData();
     }
 
     function loadAdminDashboard() {
@@ -1958,7 +1598,7 @@
           
           var badgeP = document.getElementById('badgeTotalPegawai');
           if (badgeP && res.data.pegawaiList) {
-            badgeP.innerText = res.data.pegawaiList.length + ' Pegawai';
+            badgeP.innerText = res.data.pegawaiList.length;
           }
         } else {
           showToast(res.message || 'Gagal memuat dashboard admin.', 'error');
@@ -2071,12 +1711,15 @@
       tbody.innerHTML = html;
     }
 
+    // ==========================================
+    // TAB 2: DATA PEGAWAI & GALERI FOTO ABSEN
+    // ==========================================
     function renderAdminPegawaiGrid() {
       var grid = document.getElementById('adminPegawaiGrid');
       var list = adminDataCache.pegawaiList || [];
 
       if (list.length === 0) {
-        grid.innerHTML = '<div style="text-align: center; padding: 32px; color: var(--text-muted); font-size: 12px; grid-column: 1 / -1;">Belum ada data pegawai.</div>';
+        grid.innerHTML = '<div style="text-align: center; padding: 32px; color: var(--text-muted); font-size: 12px;">Belum ada pegawai.</div>';
         return;
       }
 
@@ -2084,11 +1727,11 @@
       list.forEach(function(p) {
         var isAktif = p.status === 'Aktif';
         var statusBadge = isAktif ? '<span class="badge badge-success">Aktif</span>' : '<span class="badge badge-danger">Nonaktif</span>';
-        var roleBadge = p.role === 'Admin' ? '<span class="badge badge-admin">Admin HRD</span>' : '<span class="badge badge-pegawai">Pegawai</span>';
+        var roleBadge = p.role === 'Admin' ? '<span class="badge badge-primary">Admin HRD</span>' : '<span class="badge badge-neutral">Pegawai</span>';
 
         html += '<div class="card" style="display: flex; flex-direction: column; justify-content: space-between; gap: 14px;">' +
           '<div style="display: flex; align-items: center; gap: 12px;">' +
-            '<div style="width: 44px; height: 44px; border-radius: 12px; background: ' + (p.role === 'Admin' ? 'var(--admin-light)' : 'var(--pegawai-light)') + '; color: ' + (p.role === 'Admin' ? 'var(--admin-primary)' : 'var(--pegawai-primary)') + '; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px;">' +
+            '<div style="width: 44px; height: 44px; border-radius: 12px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px;">' +
               p.fullname.substring(0, 2).toUpperCase() +
             '</div>' +
             '<div>' +
@@ -2099,9 +1742,9 @@
           '</div>' +
           '<div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--outline); padding-top: 10px;">' +
             '<div style="display: flex; gap: 4px;">' + roleBadge + statusBadge + '</div>' +
-            '<button onclick="viewEmployeeDetail(\'' + p.nip + '\')" class="btn btn-outline" style="padding: 6px 12px; font-size: 11px; color: var(--admin-primary);">' +
+            '<button onclick="viewEmployeeDetail(\'' + p.nip + '\')" class="btn btn-primary" style="padding: 6px 12px; font-size: 11px;">' +
               '<span class="material-symbols-outlined" style="font-size: 16px;">photo_library</span>' +
-              '<span>Data & Galeri</span>' +
+              '<span>Lihat Data & Galeri</span>' +
             '</button>' +
           '</div>' +
         '</div>';
@@ -2224,6 +1867,9 @@
       document.getElementById('modalZoomPhoto').classList.add('hidden');
     }
 
+    // ==========================================
+    // TAB 3: SETTING GPS & JAM KERJA
+    // ==========================================
     function populateSettingsInputs() {
       document.getElementById('settingLat').value = systemSettings.lat;
       document.getElementById('settingLng').value = systemSettings.lng;
@@ -2369,62 +2015,6 @@
         txt.innerText = 'Simpan Pengaturan ke Spreadsheet';
         showToast('Koneksi bermasalah: ' + (err.message || err.toString()), 'error');
       });
-    }
-
-    // ==========================================
-    // ROLE 2: PEGAWAI PORTAL SUB-NAV MENUS
-    // ==========================================
-    function switchPegawaiTab(tabName) {
-      var tabPresensi = document.getElementById('pegawaiTabPresensi');
-      var tabRiwayat = document.getElementById('pegawaiTabRiwayat');
-      var tabProfil = document.getElementById('pegawaiTabProfil');
-
-      var topP = document.getElementById('pegawaiTopTabPresensi');
-      var topR = document.getElementById('pegawaiTopTabRiwayat');
-      var topPr = document.getElementById('pegawaiTopTabProfil');
-
-      var bNavP = document.getElementById('bNavPresensi');
-      var bNavR = document.getElementById('bNavRiwayat');
-      var bNavPr = document.getElementById('bNavProfil');
-
-      tabPresensi.classList.add('hidden');
-      tabRiwayat.classList.add('hidden');
-      tabProfil.classList.add('hidden');
-
-      if (topP) topP.classList.remove('active');
-      if (topR) topR.classList.remove('active');
-      if (topPr) topPr.classList.remove('active');
-
-      if (bNavP) bNavP.classList.remove('active');
-      if (bNavR) bNavR.classList.remove('active');
-      if (bNavPr) bNavPr.classList.remove('active');
-
-      if (tabName === 'presensi') {
-        tabPresensi.classList.remove('hidden');
-        if (topP) topP.classList.add('active');
-        if (bNavP) bNavP.classList.add('active');
-        initGeolocation();
-        startCamera();
-        loadDashboardData();
-      } else if (tabName === 'riwayat') {
-        tabRiwayat.classList.remove('hidden');
-        if (topR) topR.classList.add('active');
-        if (bNavR) bNavR.classList.add('active');
-        stopCamera();
-        loadHistoryData();
-      } else if (tabName === 'profil') {
-        tabProfil.classList.remove('hidden');
-        if (topPr) topPr.classList.add('active');
-        if (bNavPr) bNavPr.classList.add('active');
-        stopCamera();
-        populatePegawaiProfileInfo();
-      }
-    }
-
-    function populatePegawaiProfileInfo() {
-      document.getElementById('profilJamMasuk').innerText = (systemSettings.jamMasuk || '08:00') + ' WIB';
-      document.getElementById('profilJamPulang').innerText = (systemSettings.jamPulang || '17:00') + ' WIB';
-      document.getElementById('profilRadius').innerText = systemSettings.radius || 50;
     }
 
     // ==========================================
@@ -2576,7 +2166,7 @@
 
           var st = res.data.status;
           if (st) updateAttendanceStatus(st);
-          if (res.data.history) renderPegawaiHistoryAndStats(res.data.history);
+          if (res.data.history) renderHistory(res.data.history);
         }
       });
     }
@@ -2588,7 +2178,6 @@
       var txtPulang = document.getElementById('txtJamPulang');
       var btnMasuk = document.getElementById('btnAbsenMasuk');
       var btnPulang = document.getElementById('btnAbsenPulang');
-      var indicator = document.getElementById('pegawaiStatusIndicator');
 
       if (st.masuk) {
         badgeMasuk.innerText = 'HADIR';
@@ -2597,11 +2186,6 @@
         btnMasuk.disabled = true;
         btnMasuk.style.opacity = '0.5';
         btnMasuk.style.cursor = 'not-allowed';
-
-        if (indicator) {
-          indicator.innerText = 'Sudah Masuk';
-          indicator.className = 'badge badge-success';
-        }
       } else {
         badgeMasuk.innerText = 'BELUM';
         badgeMasuk.className = 'badge badge-neutral';
@@ -2609,11 +2193,6 @@
         btnMasuk.disabled = false;
         btnMasuk.style.opacity = '1';
         btnMasuk.style.cursor = 'pointer';
-
-        if (indicator) {
-          indicator.innerText = 'Belum Absen';
-          indicator.className = 'badge badge-neutral';
-        }
       }
 
       if (st.pulang) {
@@ -2623,11 +2202,6 @@
         btnPulang.disabled = true;
         btnPulang.style.opacity = '0.5';
         btnPulang.style.cursor = 'not-allowed';
-
-        if (indicator) {
-          indicator.innerText = 'Selesai Pulang';
-          indicator.className = 'badge badge-primary';
-        }
       } else {
         badgePulang.innerText = 'BELUM';
         badgePulang.className = 'badge badge-neutral';
@@ -2678,78 +2252,32 @@
     function loadHistoryData() {
       callBackend('getFullHistory', [sessionToken], function(res) {
         if (res.success && res.data) {
-          renderPegawaiHistoryAndStats(res.data);
+          renderHistory(res.data);
           showToast('Riwayat kehadiran diperbarui', 'info');
         }
       });
     }
 
-    function renderPegawaiHistoryAndStats(list) {
-      var container = document.getElementById('pegawaiHistoryDetailedList');
+    function renderHistory(list) {
+      var container = document.getElementById('historyList');
       if (!list || list.length === 0) {
-        if (container) {
-          container.innerHTML = '<div style="text-align: center; padding: 24px; font-size: 12px; color: var(--text-muted);">Belum ada riwayat kehadiran tercatat.</div>';
-        }
+        container.innerHTML = '<div style="text-align: center; padding: 16px; font-size: 11px; color: var(--text-muted);">Belum ada riwayat kehadiran tercatat.</div>';
         return;
       }
-
-      // Calculate personal stats
-      var hadirTotal = 0;
-      var tepatTotal = 0;
-      var terlambatTotal = 0;
-
-      list.forEach(function(item) {
-        if (item.jamMasuk && item.jamMasuk !== '--:--') {
-          hadirTotal++;
-          if (item.status === 'Terlambat') {
-            terlambatTotal++;
-          } else {
-            tepatTotal++;
-          }
-        }
-      });
-
-      var sTotal = document.getElementById('pegawaiStatTotalHadir');
-      var sTepat = document.getElementById('pegawaiStatTepatWaktu');
-      var sLate = document.getElementById('pegawaiStatTerlambat');
-      if (sTotal) sTotal.innerText = hadirTotal;
-      if (sTepat) sTepat.innerText = tepatTotal;
-      if (sLate) sLate.innerText = terlambatTotal;
-
-      if (!container) return;
 
       var html = '';
       list.forEach(function(item) {
         var isOk = item.statusGeofence === 'VALID' || item.status === 'Hadir';
         var badgeColor = isOk ? 'badge-success' : 'badge-danger';
-        var statusLabel = item.status || (isOk ? 'Hadir' : 'Di Luar');
+        var statusLabel = isOk ? 'Hadir' : (item.statusGeofence || 'Di Luar');
 
-        var hasPhoto = item.fotoBukti && item.fotoBukti.indexOf('data:image') === 0;
-        var thumbSrc = hasPhoto ? item.fotoBukti : 'https://api.dicebear.com/7.x/identicon/svg?seed=' + item.tanggal;
-
-        var itemData = {
-          nama: currentUser ? currentUser.fullname : 'Saya',
-          nip: currentUser ? currentUser.nip : '-',
-          tanggal: item.tanggal,
-          jam_masuk: item.jamMasuk,
-          jarak_meter: item.jarak || 0,
-          status_liveness: 'OK',
-          foto_bukti: thumbSrc
-        };
-        var escapedItem = encodeURIComponent(JSON.stringify(itemData));
-
-        html += '<div style="background: var(--surface-low); border: 1px solid var(--outline); border-radius: var(--radius-md); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">' +
-          '<div style="display: flex; align-items: center; gap: 10px;">' +
-            '<div onclick="openZoomPhoto(\'' + escapedItem + '\')" style="width: 42px; height: 42px; border-radius: 10px; overflow: hidden; background: #0f172a; cursor: pointer; flex-shrink: 0; border: 1px solid var(--outline);">' +
-              '<img src="' + thumbSrc + '" alt="Bukti" style="width: 100%; height: 100%; object-fit: cover;"/>' +
-            '</div>' +
-            '<div>' +
-              '<div style="font-weight: 700; font-family: monospace; font-size: 13px;">' + item.tanggal + '</div>' +
-              '<div style="color: var(--text-muted); font-size: 11px;">Masuk: <b>' + item.jamMasuk + '</b> &bull; Pulang: <b>' + item.jamPulang + '</b></div>' +
-            '</div>' +
+        html += '<div style="background: var(--surface-low); border: 1px solid var(--outline); border-radius: var(--radius-md); padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">' +
+          '<div>' +
+            '<div style="font-weight: 700; font-family: monospace;">' + item.tanggal + '</div>' +
+            '<div style="color: var(--text-muted); font-size: 10px;">Masuk: <b>' + item.jamMasuk + '</b> &bull; Pulang: <b>' + item.jamPulang + '</b></div>' +
           '</div>' +
-          '<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">' +
-            '<span class="badge ' + badgeColor + '" style="font-size: 10px;">' + statusLabel + '</span>' +
+          '<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">' +
+            '<span class="badge ' + badgeColor + '">' + statusLabel + '</span>' +
             '<span style="font-size: 10px; color: var(--text-muted); font-family: monospace;">' + (item.jarak ? item.jarak + 'm' : '') + '</span>' +
           '</div>' +
         '</div>';
