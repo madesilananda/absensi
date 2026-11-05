@@ -450,7 +450,7 @@
           <label class="form-label" for="loginUsername">Username / ID Pegawai</label>
           <div style="position: relative; display: flex; align-items: center;">
             <span class="material-symbols-outlined" style="position: absolute; left: 12px; color: var(--text-muted); font-size: 20px;">badge</span>
-            <input type="text" id="loginUsername" required placeholder="admin / staff / rian" class="form-input" style="padding-left: 40px;"/>
+            <input type="text" id="loginUsername" required placeholder="Username atau ID pegawai" class="form-input" style="padding-left: 40px;"/>
           </div>
         </div>
 
@@ -461,22 +461,6 @@
             <input type="password" id="loginPassword" required placeholder="Masukkan password" class="form-input" style="padding-left: 40px; padding-right: 40px;"/>
             <button type="button" onclick="togglePasswordVisibility()" style="position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: var(--text-muted);">
               <span id="eyeIcon" class="material-symbols-outlined" style="font-size: 20px;">visibility</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Quick Demo Accounts -->
-        <div style="background: var(--surface-low); border: 1px solid var(--outline); border-radius: var(--radius-md); padding: 12px;">
-          <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Pilih Akun Cepat:</span>
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px;">
-            <button type="button" onclick="fillAccount('admin', 'Admin@2026')" class="btn btn-outline" style="padding: 6px; font-size: 11px; font-weight: 700; color: var(--primary); border-color: var(--primary);">
-              👑 Admin
-            </button>
-            <button type="button" onclick="fillAccount('staff', 'Admin@2026')" class="btn btn-outline" style="padding: 6px; font-size: 11px;">
-              Dimas
-            </button>
-            <button type="button" onclick="fillAccount('rian', 'Admin@2026')" class="btn btn-outline" style="padding: 6px; font-size: 11px;">
-              Rian
             </button>
           </div>
         </div>
@@ -527,6 +511,9 @@
           <span class="pulse-dot" style="margin-right: 4px;"></span>
           <span>GAS V8 Online</span>
         </span>
+        <button onclick="openModalChangePassword()" class="btn btn-outline" style="padding: 8px; border-radius: 10px;" title="Ganti kata sandi">
+          <span class="material-symbols-outlined" style="font-size: 20px;">key</span>
+        </button>
         <button onclick="handleLogout()" class="btn btn-outline" style="padding: 8px; border-radius: 10px;" title="Keluar / Logout">
           <span class="material-symbols-outlined" style="font-size: 20px; color: var(--danger);">logout</span>
         </button>
@@ -646,7 +633,7 @@
                 <th>Pegawai & Foto Bukti</th>
                 <th>Waktu Masuk & Pulang</th>
                 <th>Lokasi GPS & Radius</th>
-                <th>Biometrik Liveness</th>
+                <th>Verifikasi Wajah</th>
                 <th style="text-align: center;">Aksi Audit</th>
               </tr>
             </thead>
@@ -969,11 +956,11 @@
         <div style="display: flex; align-items: center; gap: 8px;">
           <span class="material-symbols-outlined" style="color: var(--primary);">face</span>
           <div>
-            <div style="font-size: 13px; font-weight: 700;">Pemindaian Wajah Biometrik</div>
-            <div style="font-size: 10px; color: var(--text-muted);">Real-time Anti-Spoofing</div>
+            <div style="font-size: 13px; font-weight: 700;">Kamera Presensi</div>
+            <div style="font-size: 10px; color: var(--text-muted);">Foto bukti kehadiran (pencocokan wajah belum aktif)</div>
           </div>
         </div>
-        <span id="livenessScoreBadge" class="badge badge-success">Liveness: 96%</span>
+        <span id="livenessScoreBadge" class="badge badge-neutral">Foto bukti</span>
       </div>
 
       <!-- Viewfinder -->
@@ -1000,10 +987,6 @@
         <button onclick="startCamera()" type="button" class="btn btn-outline" style="flex: 1; font-size: 11px;">
           <span class="material-symbols-outlined" style="font-size: 16px;">videocam</span>
           <span>Segarkan Kamera</span>
-        </button>
-        <button onclick="testLiveness()" type="button" class="btn btn-outline" style="font-size: 11px;">
-          <span class="material-symbols-outlined" style="font-size: 16px;">verified</span>
-          <span>Uji Liveness</span>
         </button>
       </div>
     </div>
@@ -1125,7 +1108,7 @@
 
         <div class="form-group">
           <label class="form-label" for="newPegawaiPassword">Password Default</label>
-          <input type="text" id="newPegawaiPassword" value="Admin@2026" required class="form-input" style="font-family: monospace;"/>
+          <input type="text" id="newPegawaiPassword" required minlength="8" placeholder="Minimal 8 karakter" class="form-input" style="font-family: monospace;"/>
         </div>
 
         <div class="form-group">
@@ -1139,6 +1122,39 @@
         <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
           <button type="button" onclick="closeModalAddPegawai()" class="btn btn-outline">Batal</button>
           <button type="submit" id="btnSubmitAddPegawai" class="btn btn-primary">Simpan Pegawai</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: GANTI KATA SANDI -->
+  <!-- ========================================== -->
+  <div id="modalChangePassword" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 420px;">
+      <div style="padding: 16px 20px; border-bottom: 1px solid var(--outline); display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="font-heading" style="font-size: 15px; font-weight: 700;">Ganti Kata Sandi</h3>
+        <button onclick="closeModalChangePassword()" class="btn btn-outline" style="padding: 6px; border: none;">
+          <span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+        </button>
+      </div>
+
+      <form id="formChangePassword" onsubmit="submitChangePassword(event)" style="padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+        <div class="form-group">
+          <label class="form-label" for="cpOld">Kata Sandi Lama</label>
+          <input type="password" id="cpOld" required autocomplete="current-password" class="form-input"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cpNew">Kata Sandi Baru (minimal 8 karakter)</label>
+          <input type="password" id="cpNew" required minlength="8" autocomplete="new-password" class="form-input"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cpNew2">Ulangi Kata Sandi Baru</label>
+          <input type="password" id="cpNew2" required minlength="8" autocomplete="new-password" class="form-input"/>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
+          <button type="button" onclick="closeModalChangePassword()" class="btn btn-outline">Batal</button>
+          <button type="submit" id="btnSubmitChangePassword" class="btn btn-primary">Simpan Kata Sandi</button>
         </div>
       </form>
     </div>
@@ -1169,11 +1185,16 @@
   <!-- CORE JAVASCRIPT LOGIC -->
   <!-- ========================================== -->
   <script>
+    // ==========================================
+    // KONFIGURASI: tempel URL Web App Apps Script (berakhiran /exec)
+    // ==========================================
+    var API_URL = 'GANTI_DENGAN_URL_EXEC_APPS_SCRIPT';
+
     // System State
     var currentUser = null;
     var sessionToken = null;
     var currentActiveView = 'presensi';
-    var currentCoords = { lat: -6.208850, lng: 106.845620 };
+    var currentCoords = null;
     var systemSettings = {
       radius: 50,
       lat: -6.208850,
@@ -1257,11 +1278,6 @@
       window.addEventListener('load', initApp);
     }
 
-    function fillAccount(username, password) {
-      document.getElementById('loginUsername').value = username;
-      document.getElementById('loginPassword').value = password;
-    }
-
     function togglePasswordVisibility() {
       var pwd = document.getElementById('loginPassword');
       var icon = document.getElementById('eyeIcon');
@@ -1304,121 +1320,66 @@
     }
 
     // ==========================================
-    // BACKEND RUNNER & OFFLINE PREVIEW MOCK
+    // PANGGILAN KE BACKEND (Apps Script lewat fetch)
     // ==========================================
-    function callBackend(functionName, args, onSuccess, onFailure) {
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-        var runner = google.script.run
-          .withSuccessHandler(onSuccess)
-          .withFailureHandler(function(err) {
-            console.error('GAS Error:', err);
-            if (onFailure) onFailure(err);
-            else showToast('Error server: ' + (err.message || err.toString()), 'error');
-          });
-        runner[functionName].apply(runner, args);
-      } else {
-        console.warn('Mode Preview/Simulasi: GAS tidak terdeteksi.');
-        setTimeout(function() {
-          handleLocalMock(functionName, args, onSuccess, onFailure);
-        }, 500);
-      }
+    function handleSessionExpired() {
+      try {
+        sessionStorage.removeItem('presensi_token');
+        sessionStorage.removeItem('presensi_user');
+      } catch (e) {}
+      currentUser = null;
+      sessionToken = null;
+      stopCamera();
+      showLoginScreen();
+      showToast('Sesi berakhir. Silakan login kembali.', 'warning');
     }
 
-    function handleLocalMock(functionName, args, onSuccess) {
-      if (functionName === 'loginUser') {
-        var u = args[0];
-        var p = args[1];
-        if (p === 'Admin@2026') {
-          var role = u === 'admin' ? 'Admin' : 'Pegawai';
-          onSuccess({
-            success: true,
-            token: 'mock-token-' + Date.now(),
-            user: { 
-              username: u, 
-              nip: u === 'admin' ? 'HRD-001' : (u === 'staff' ? 'EMP-8840' : 'EMP-8841'), 
-              fullname: u === 'admin' ? 'Administrator HRD' : (u === 'staff' ? 'Dimas Setiawan' : 'Rian Pratama'), 
-              role: role 
-            }
-          });
-        } else {
-          onSuccess({ success: false, message: 'Password salah! (Gunakan Admin@2026)' });
-        }
-      } else if (functionName === 'getDashboardData') {
-        onSuccess({
-          success: true,
-          data: {
-            serverTime: Date.now(),
-            pengaturan: systemSettings,
-            status: { masuk: false, pulang: false, jamMasuk: '--:--', jamPulang: '--:--' },
-            history: [
-              { tanggal: '2026-10-20', jamMasuk: '07:45:12', jamPulang: '17:05:30', status: 'Hadir', fotoBukti: '' },
-              { tanggal: '2026-10-19', jamMasuk: '07:50:00', jamPulang: '17:00:22', status: 'Hadir', fotoBukti: '' }
-            ]
-          }
-        });
-      } else if (functionName === 'processPresensi') {
-        var payload = args[1];
-        onSuccess({
-          success: true,
-          message: 'Presensi ' + payload.jenis + ' berhasil disimpan!',
-          jarak: 14,
-          status: 'VALID'
-        });
-      } else if (functionName === 'getAdminDashboardData') {
-        onSuccess({
-          success: true,
-          data: {
-            summary: {
-              totalPegawai: 5,
-              hadir: 4,
-              tepatWaktu: 3,
-              terlambat: 1,
-              belumAbsen: 1,
-              persentaseHadir: 80
-            },
-            pegawaiList: [
-              { id: '1', username: 'admin', fullname: 'Administrator HRD', role: 'Admin', nip: 'HRD-001', status: 'Aktif' },
-              { id: '2', username: 'staff', fullname: 'Dimas Setiawan', role: 'Pegawai', nip: 'EMP-8840', status: 'Aktif' },
-              { id: '3', username: 'rian', fullname: 'Rian Pratama', role: 'Pegawai', nip: 'EMP-8841', status: 'Aktif' },
-              { id: '4', username: 'siti', fullname: 'Siti Rahma', role: 'Pegawai', nip: 'EMP-8838', status: 'Aktif' },
-              { id: '5', username: 'hendra', fullname: 'Hendra Kusuma', role: 'Pegawai', nip: 'EMP-8839', status: 'Aktif' }
-            ],
-            absensiToday: [
-              { id_absen: 'a1', tanggal: '2026-10-21', nip: 'EMP-8838', nama: 'Siti Rahma', jam_masuk: '07:22:14', jam_pulang: '--:--', lokasi_lat: -6.208850, lokasi_lng: 106.845620, jarak_meter: 11, status_geofence: 'VALID', status_liveness: 'OK', status_kehadiran: 'Tepat Waktu', foto_bukti: '' },
-              { id_absen: 'a2', tanggal: '2026-10-21', nip: 'EMP-8841', nama: 'Rian Pratama', jam_masuk: '07:45:00', jam_pulang: '--:--', lokasi_lat: -6.208850, lokasi_lng: 106.845620, jarak_meter: 18, status_geofence: 'VALID', status_liveness: 'OK', status_kehadiran: 'Tepat Waktu', foto_bukti: '' },
-              { id_absen: 'a3', tanggal: '2026-10-21', nip: 'EMP-8839', nama: 'Hendra Kusuma', jam_masuk: '08:18:44', jam_pulang: '--:--', lokasi_lat: -6.208850, lokasi_lng: 106.845620, jarak_meter: 22, status_geofence: 'VALID', status_liveness: 'OK', status_kehadiran: 'Terlambat', foto_bukti: '' },
-              { id_absen: 'a4', tanggal: '2026-10-21', nip: 'EMP-8840', nama: 'Dimas Setiawan', jam_masuk: '08:04:12', jam_pulang: '--:--', lokasi_lat: -6.208850, lokasi_lng: 106.845620, jarak_meter: 148, status_geofence: 'OUT_OF_BOUNDS', status_liveness: 'SPOOF_WARNING', status_kehadiran: 'Terlambat', foto_bukti: '' }
-            ],
-            pengaturan: systemSettings
-          }
-        });
-      } else if (functionName === 'getPegawaiDetailWithPhotos') {
-        var nip = args[1];
-        onSuccess({
-          success: true,
-          data: {
-            pegawai: { id: 'u2', username: 'staff', fullname: 'Dimas Setiawan', nip: nip, role: 'Pegawai', status: 'Aktif' },
-            riwayat: [
-              { id_absen: 'h1', tanggal: '2026-10-21', jam_masuk: '08:04:12', jam_pulang: '--:--', jarak_meter: 14, status_geofence: 'VALID', status_liveness: 'OK', foto_bukti: '' },
-              { id_absen: 'h2', tanggal: '2026-10-20', jam_masuk: '07:55:00', jam_pulang: '17:02:10', jarak_meter: 18, status_geofence: 'VALID', status_liveness: 'OK', foto_bukti: '' },
-              { id_absen: 'h3', tanggal: '2026-10-19', jam_masuk: '07:48:30', jam_pulang: '17:00:15', jarak_meter: 12, status_geofence: 'VALID', status_liveness: 'OK', foto_bukti: '' }
-            ]
-          }
-        });
-      } else if (functionName === 'updateSystemSettings') {
-        systemSettings = Object.assign(systemSettings, args[1]);
-        onSuccess({ success: true, message: 'Pengaturan GPS, Jam Kerja & Bot Telegram berhasil disimpan!' });
-      } else if (functionName === 'testTelegramBot') {
-        onSuccess({ success: true, message: 'Pesan pengujian berhasil dikirim ke Telegram (Simulasi Mock).' });
-      } else if (functionName === 'setupTelegramTriggerApi') {
-        onSuccess({ success: true, message: 'Pemicu otomatis 15 menit berhasil dipasang (Simulasi Mock).' });
-      } else if (functionName === 'manualTriggerTelegramReminder') {
-        onSuccess({ success: true, message: 'Pengecekan pengingat keterlambatan dijalankan (Simulasi Mock).' });
-      } else if (functionName === 'addNewPegawai') {
-        onSuccess({ success: true, message: 'Pegawai berhasil ditambahkan ke database.' });
-      } else if (functionName === 'destroySession') {
-        onSuccess({ success: true, message: 'Logout berhasil' });
+    function callBackend(functionName, args, onSuccess, onFailure) {
+      if (!API_URL || API_URL.indexOf('GANTI_DENGAN') === 0) {
+        var cfgErr = new Error('API_URL belum diisi di index.html');
+        showToast(cfgErr.message, 'error');
+        if (onFailure) onFailure(cfgErr);
+        return;
       }
+
+      var controller = new AbortController();
+      var timer = setTimeout(function() { controller.abort(); }, 30000);
+
+      fetch(API_URL, {
+        method: 'POST',
+        // text/plain menghindari preflight CORS yang tidak didukung Apps Script
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ fn: functionName, args: args }),
+        signal: controller.signal
+      })
+      .then(function(resp) {
+        clearTimeout(timer);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        return resp.text().then(function(t) {
+          try {
+            return JSON.parse(t);
+          } catch (parseErr) {
+            throw new Error('Respons server bukan JSON. Periksa deploy Web App (akses: Anyone) dan URL /exec.');
+          }
+        });
+      })
+      .then(function(res) {
+        if (res && res.sessionExpired && sessionToken) {
+          handleSessionExpired();
+          return;
+        }
+        try {
+          onSuccess(res);
+        } catch (handlerErr) {
+          console.error('Handler error:', handlerErr);
+        }
+      }, function(err) {
+        clearTimeout(timer);
+        var e2 = (err && err.name === 'AbortError') ? new Error('Server terlalu lama merespons.') : err;
+        console.error('API error:', e2);
+        if (onFailure) onFailure(e2);
+        else showToast('Error server: ' + (e2.message || e2.toString()), 'error');
+      });
     }
 
     // ==========================================
@@ -1695,8 +1656,8 @@
           '</td>' +
           '<td>' +
             '<div style="display: flex; align-items: center; gap: 4px; font-weight: 600;">' +
-              '<span class="material-symbols-outlined" style="font-size: 16px; color: var(--secondary);">verified</span>' +
-              '<span>' + (row.status_liveness || 'OK') + '</span>' +
+              '<span class="material-symbols-outlined" style="font-size: 16px; color: var(--text-muted);">photo_camera</span>' +
+              '<span>' + (row.status_liveness === 'TANPA_FOTO' ? 'Tanpa foto' : 'Foto bukti') + '</span>' +
             '</div>' +
           '</td>' +
           '<td style="text-align: center;">' +
@@ -1854,12 +1815,57 @@
       });
     }
 
+    function openModalChangePassword() {
+      document.getElementById('formChangePassword').reset();
+      document.getElementById('modalChangePassword').classList.remove('hidden');
+    }
+
+    function closeModalChangePassword() {
+      document.getElementById('modalChangePassword').classList.add('hidden');
+    }
+
+    function submitChangePassword(e) {
+      e.preventDefault();
+      // trim agar konsisten dengan form login yang juga men-trim kata sandi
+      var oldPwd = document.getElementById('cpOld').value.trim();
+      var newPwd = document.getElementById('cpNew').value.trim();
+      var newPwd2 = document.getElementById('cpNew2').value.trim();
+
+      if (newPwd.length < 8) {
+        showToast('Kata sandi baru minimal 8 karakter.', 'warning');
+        return;
+      }
+      if (newPwd !== newPwd2) {
+        showToast('Kata sandi baru dan pengulangannya tidak sama.', 'warning');
+        return;
+      }
+
+      var btn = document.getElementById('btnSubmitChangePassword');
+      btn.disabled = true;
+      btn.innerText = 'Menyimpan...';
+
+      callBackend('changePassword', [sessionToken, oldPwd, newPwd], function(res) {
+        btn.disabled = false;
+        btn.innerText = 'Simpan Kata Sandi';
+        if (res.success) {
+          showToast(res.message || 'Kata sandi berhasil diganti.', 'success');
+          closeModalChangePassword();
+        } else {
+          showToast(res.message || 'Gagal mengganti kata sandi.', 'error');
+        }
+      }, function(err) {
+        btn.disabled = false;
+        btn.innerText = 'Simpan Kata Sandi';
+        showToast('Koneksi bermasalah: ' + (err.message || err.toString()), 'error');
+      });
+    }
+
     function openZoomPhoto(escapedJson) {
       var data = JSON.parse(decodeURIComponent(escapedJson));
       document.getElementById('zoomPhotoImage').src = data.foto_bukti;
       document.getElementById('zoomPhotoPegawai').innerText = data.nama + ' (' + data.nip + ')';
       document.getElementById('zoomPhotoMetadata').innerText = data.tanggal + ' | Masuk: ' + data.jam_masuk + ' | Jarak: ' + data.jarak_meter + 'm';
-      document.getElementById('zoomPhotoLiveness').innerText = 'Liveness: ' + (data.status_liveness || 'OK');
+      document.getElementById('zoomPhotoLiveness').innerText = (data.status_liveness === 'TANPA_FOTO') ? 'Tanpa foto' : 'Foto bukti';
       document.getElementById('modalZoomPhoto').classList.remove('hidden');
     }
 
@@ -2034,21 +2040,31 @@
       return Math.round(R * c);
     }
 
+    function gpsErrorMessage(err) {
+      if (err && err.code === 1) return 'izin lokasi ditolak. Ketuk ikon gembok di address bar > Izin > Lokasi > Izinkan.';
+      if (err && err.code === 2) return 'sinyal GPS tidak tersedia.';
+      if (err && err.code === 3) return 'pencarian lokasi terlalu lama, coba lagi di tempat terbuka.';
+      return (err && err.message) || 'penyebab tidak diketahui.';
+    }
+
     function initGeolocation() {
       if (!navigator.geolocation) {
-        updateGeofenceUI(999, false, 'GPS tidak didukung perangkat');
+        currentCoords = null;
+        isInsideGeofence = false;
+        updateGeofenceUI(0, false, 'GPS tidak didukung');
         return;
       }
 
       navigator.geolocation.getCurrentPosition(
         function(pos) {
-          currentCoords.lat = pos.coords.latitude;
-          currentCoords.lng = pos.coords.longitude;
+          currentCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
           evaluateGeofence();
         },
         function(err) {
-          evaluateGeofence();
-          showToast('GPS: ' + (err.message || 'Izinkan akses lokasi'), 'warning');
+          currentCoords = null;
+          isInsideGeofence = false;
+          updateGeofenceUI(0, false, 'Lokasi tidak terdeteksi');
+          showToast('GPS: ' + gpsErrorMessage(err), 'warning');
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
@@ -2060,6 +2076,11 @@
     }
 
     function evaluateGeofence() {
+      if (!currentCoords) {
+        isInsideGeofence = false;
+        updateGeofenceUI(0, false, 'Lokasi tidak terdeteksi');
+        return;
+      }
       var dist = calculateHaversine(systemSettings.lat, systemSettings.lng, currentCoords.lat, currentCoords.lng);
       currentDistance = dist;
       isInsideGeofence = dist <= systemSettings.radius;
@@ -2073,7 +2094,9 @@
 
       if (!badge || !distTxt || !coordTxt) return;
 
-      coordTxt.innerText = 'Lat: ' + currentCoords.lat.toFixed(6) + ', Lng: ' + currentCoords.lng.toFixed(6);
+      coordTxt.innerText = currentCoords
+        ? ('Lat: ' + currentCoords.lat.toFixed(6) + ', Lng: ' + currentCoords.lng.toFixed(6))
+        : '-';
 
       if (customMsg) {
         badge.className = 'badge badge-danger';
@@ -2093,6 +2116,14 @@
       }
     }
 
+    function cameraErrorMessage(err) {
+      var name = (err && err.name) || '';
+      if (name === 'NotAllowedError' || name === 'SecurityError') return 'Izin kamera ditolak. Ketuk ikon gembok di address bar > Izin > Kamera > Izinkan, lalu tekan Aktifkan Kamera.';
+      if (name === 'NotFoundError' || name === 'OverconstrainedError') return 'Kamera depan tidak ditemukan di perangkat ini.';
+      if (name === 'NotReadableError' || name === 'AbortError') return 'Kamera sedang dipakai aplikasi lain. Tutup aplikasi itu lalu coba lagi.';
+      return 'Kamera gagal diaktifkan: ' + ((err && err.message) || name || 'penyebab tidak diketahui');
+    }
+
     function startCamera() {
       var video = document.getElementById('cameraVideo');
       var placeholder = document.getElementById('cameraPlaceholder');
@@ -2109,13 +2140,14 @@
         video: { facingMode: 'user', width: { ideal: 480 }, height: { ideal: 360 } } 
       })
       .then(function(stream) {
+        stopCamera();
         cameraStream = stream;
         video.srcObject = stream;
         if (placeholder) placeholder.classList.add('hidden');
       })
       .catch(function(err) {
         if (placeholder) placeholder.classList.remove('hidden');
-        showToast('Akses kamera ditolak. Berikan izin di browser.', 'warning');
+        showToast(cameraErrorMessage(err), 'warning');
       });
     }
 
@@ -2124,20 +2156,6 @@
         cameraStream.getTracks().forEach(function(track) { track.stop(); });
         cameraStream = null;
       }
-    }
-
-    function testLiveness() {
-      var badge = document.getElementById('livenessScoreBadge');
-      if (!badge) return;
-      badge.innerText = 'Menganalisis...';
-      badge.className = 'badge badge-warning';
-
-      setTimeout(function() {
-        var score = Math.floor(Math.random() * 8) + 92;
-        badge.innerText = 'Liveness: ' + score + '% (Valid)';
-        badge.className = 'badge badge-success';
-        showToast('Verifikasi liveness biometrik: ' + score + '%', 'success');
-      }, 700);
     }
 
     function captureSnapshot() {
@@ -2213,40 +2231,62 @@
     }
 
     function submitPresensi(jenis) {
-      if (!isInsideGeofence && jenis === 'masuk') {
-        var proceed = confirm('Peringatan: Posisi Anda berada ' + currentDistance + 'm dari kantor (Batas: ' + systemSettings.radius + 'm). Lanjutkan presensi?');
-        if (!proceed) return;
+      var btn = jenis === 'masuk' ? document.getElementById('btnAbsenMasuk') : document.getElementById('btnAbsenPulang');
+      var video = document.getElementById('cameraVideo');
+
+      if (!cameraStream || !video || !video.videoWidth) {
+        showToast('Kamera belum aktif. Tekan "Aktifkan Kamera" dan izinkan akses.', 'warning');
+        return;
+      }
+      if (!navigator.geolocation) {
+        showToast('Perangkat ini tidak mendukung GPS.', 'error');
+        return;
       }
 
-      var btn = jenis === 'masuk' ? document.getElementById('btnAbsenMasuk') : document.getElementById('btnAbsenPulang');
-      btn.disabled = true;
       var oriText = btn.innerHTML;
-      btn.innerHTML = '<span>Memproses...</span>';
-
-      var snapshot = captureSnapshot();
-      var payload = {
-        jenis: jenis,
-        lat: currentCoords.lat,
-        lng: currentCoords.lng,
-        liveness_score: 95,
-        foto: snapshot
-      };
-
-      callBackend('processPresensi', [sessionToken, payload], function(res) {
+      function resetBtn() {
         btn.innerHTML = oriText;
         btn.disabled = false;
+      }
 
-        if (res.success) {
-          showToast(res.message || 'Presensi berhasil dicatat!', 'success');
-          loadDashboardData();
-        } else {
-          showToast(res.message || 'Gagal mencatat presensi.', 'error');
+      btn.disabled = true;
+      btn.innerHTML = '<span>Mengambil lokasi...</span>';
+
+      // Selalu ambil lokasi baru saat menekan tombol, bukan memakai lokasi lama
+      navigator.geolocation.getCurrentPosition(function(pos) {
+        currentCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        evaluateGeofence();
+
+        if (!isInsideGeofence) {
+          resetBtn();
+          showToast('Absen ditolak: Anda berada ' + currentDistance + ' m dari kantor (batas ' + systemSettings.radius + ' m).', 'error');
+          return;
         }
+
+        btn.innerHTML = '<span>Memproses...</span>';
+        var payload = {
+          jenis: jenis,
+          lat: currentCoords.lat,
+          lng: currentCoords.lng,
+          foto: captureSnapshot()
+        };
+
+        callBackend('processPresensi', [sessionToken, payload], function(res) {
+          resetBtn();
+          if (res.success) {
+            showToast(res.message || 'Presensi berhasil dicatat!', 'success');
+          } else {
+            showToast(res.message || 'Gagal mencatat presensi.', 'error');
+          }
+          loadDashboardData();
+        }, function(err) {
+          resetBtn();
+          showToast('Gagal terhubung: ' + (err.message || err.toString()), 'error');
+        });
       }, function(err) {
-        btn.innerHTML = oriText;
-        btn.disabled = false;
-        showToast('Gagal terhubung: ' + (err.message || err.toString()), 'error');
-      });
+        resetBtn();
+        showToast('Lokasi tidak bisa dibaca: ' + gpsErrorMessage(err), 'error');
+      }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
     }
 
     function loadHistoryData() {
