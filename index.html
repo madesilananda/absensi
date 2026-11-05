@@ -726,8 +726,8 @@
               <span class="material-symbols-outlined" style="font-size: 24px;">schedule</span>
             </div>
             <div>
-              <h3 class="font-heading" style="font-size: 15px; font-weight: 700;">2. Setting Jam Masuk & Keluar</h3>
-              <p style="font-size: 12px; color: var(--text-muted);">Aturan jam operasional dan toleransi keterlambatan.</p>
+              <h3 class="font-heading" style="font-size: 15px; font-weight: 700;">2. Jadwal Default Jam Masuk & Keluar</h3>
+              <p style="font-size: 12px; color: var(--text-muted);">Berlaku untuk pegawai yang belum punya jadwal khusus. Jadwal tiap pegawai diatur lewat tombol "Jam Kerja" di tab Data Pegawai.</p>
             </div>
           </div>
 
@@ -1119,9 +1119,62 @@
           </select>
         </div>
 
+        <div style="display: flex; gap: 10px;">
+          <div class="form-group" style="flex: 1;">
+            <label class="form-label" for="newPegawaiJamMasuk">Jam Masuk (opsional)</label>
+            <input type="time" id="newPegawaiJamMasuk" class="form-input" style="font-family: monospace;"/>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label class="form-label" for="newPegawaiJamPulang">Jam Pulang (opsional)</label>
+            <input type="time" id="newPegawaiJamPulang" class="form-input" style="font-family: monospace;"/>
+          </div>
+        </div>
+        <span style="font-size: 11px; color: var(--text-muted); margin-top: -6px;">Kosongkan keduanya untuk memakai jadwal default dari menu Setting.</span>
+
         <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
           <button type="button" onclick="closeModalAddPegawai()" class="btn btn-outline">Batal</button>
           <button type="submit" id="btnSubmitAddPegawai" class="btn btn-primary">Simpan Pegawai</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: ATUR JAM KERJA PEGAWAI (ADMIN) -->
+  <!-- ========================================== -->
+  <div id="modalSchedule" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 440px;">
+      <div style="padding: 16px 20px; border-bottom: 1px solid var(--outline); display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="font-heading" style="font-size: 15px; font-weight: 700;">Atur Jam Kerja Pegawai</h3>
+        <button onclick="closeModalSchedule()" class="btn btn-outline" style="padding: 6px; border: none;">
+          <span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+        </button>
+      </div>
+
+      <form id="formSchedule" onsubmit="submitSchedule(event)" style="padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+        <div class="card-sm" style="background: var(--surface-low);">
+          <div id="scheduleName" style="font-weight: 700; font-size: 13px;">Nama Pegawai</div>
+          <div id="scheduleInfo" style="font-size: 11px; color: var(--text-muted); font-family: monospace;">@username</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="scheduleJamMasuk">Jam Masuk</label>
+          <input type="time" id="scheduleJamMasuk" class="form-input" style="font-family: monospace;"/>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="scheduleJamPulang">Jam Pulang</label>
+          <input type="time" id="scheduleJamPulang" class="form-input" style="font-family: monospace;"/>
+        </div>
+
+        <span id="scheduleHint" style="font-size: 11px; color: var(--text-muted);"></span>
+
+        <div style="display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+          <button type="button" onclick="useDefaultSchedule()" class="btn btn-outline" style="font-size: 12px;">Pakai Jadwal Default</button>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" onclick="closeModalSchedule()" class="btn btn-outline">Batal</button>
+            <button type="submit" id="btnSubmitSchedule" class="btn btn-primary">Simpan</button>
+          </div>
         </div>
       </form>
     </div>
@@ -1225,7 +1278,7 @@
     // ==========================================
     // KONFIGURASI: tempel URL Web App Apps Script (berakhiran /exec)
     // ==========================================
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxE_VHbxYTYJV9HWslu6yn_9wLhu1RC2MuG5ZtlfL_Ekwv2eBfojm_C1AjLS5YCfSxnUQ/exec';
+    var API_URL = 'GANTI_DENGAN_URL_EXEC_APPS_SCRIPT';
 
     // System State
     var currentUser = null;
@@ -1730,6 +1783,13 @@
             '<span class="material-symbols-outlined" style="font-size: 16px;">lock_reset</span>' +
             '<span>Reset Sandi</span>' +
           '</button>';
+        var jadwalBtn =
+          '<button onclick="openModalSchedule(\'' + p.id + '\')" class="btn btn-outline" style="padding: 6px 10px; font-size: 11px;" title="Atur jam masuk & pulang pegawai">' +
+            '<span class="material-symbols-outlined" style="font-size: 16px;">schedule</span>' +
+            '<span>Jam Kerja</span>' +
+          '</button>';
+        var jadwalLabel = '<div style="font-size: 11px; margin-top: 2px; color: ' + (p.jadwalKustom ? 'var(--primary)' : 'var(--text-muted)') + ';">' +
+          '&#9201; ' + (p.jamMasuk || '--:--') + ' - ' + (p.jamPulang || '--:--') + (p.jadwalKustom ? ' (jadwal khusus)' : ' (default)') + '</div>';
         var statusBadge = isAktif ? '<span class="badge badge-success">Aktif</span>' : '<span class="badge badge-danger">Nonaktif</span>';
         var roleBadge = p.role === 'Admin' ? '<span class="badge badge-primary">Admin HRD</span>' : '<span class="badge badge-neutral">Pegawai</span>';
 
@@ -1742,11 +1802,12 @@
               '<h3 class="font-heading" style="font-size: 14px; font-weight: 700;">' + p.fullname + '</h3>' +
               '<div style="font-size: 11px; color: var(--text-muted); font-family: monospace;">NIP: ' + p.nip + '</div>' +
               '<div style="font-size: 11px; color: var(--text-muted);">@' + p.username + '</div>' +
+              jadwalLabel +
             '</div>' +
           '</div>' +
           '<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; border-top: 1px solid var(--outline); padding-top: 10px;">' +
             '<div style="display: flex; gap: 4px;">' + roleBadge + statusBadge + '</div>' +
-            '<div style="display: flex; gap: 6px;">' + resetBtn +
+            '<div style="display: flex; flex-wrap: wrap; gap: 6px;">' + jadwalBtn + resetBtn +
               '<button onclick="viewEmployeeDetail(\'' + p.nip + '\')" class="btn btn-primary" style="padding: 6px 12px; font-size: 11px;">' +
                 '<span class="material-symbols-outlined" style="font-size: 16px;">photo_library</span>' +
                 '<span>Lihat Data & Galeri</span>' +
@@ -1839,8 +1900,14 @@
         nip: document.getElementById('newPegawaiNIP').value.trim(),
         username: document.getElementById('newPegawaiUsername').value.trim(),
         password: document.getElementById('newPegawaiPassword').value.trim(),
-        role: document.getElementById('newPegawaiRole').value
+        role: document.getElementById('newPegawaiRole').value,
+        jamMasuk: document.getElementById('newPegawaiJamMasuk').value,
+        jamPulang: document.getElementById('newPegawaiJamPulang').value
       };
+      if ((payload.jamMasuk && !payload.jamPulang) || (!payload.jamMasuk && payload.jamPulang)) {
+        showToast('Isi jam masuk dan jam pulang sekaligus, atau kosongkan keduanya.', 'warning');
+        return;
+      }
 
       var btn = document.getElementById('btnSubmitAddPegawai');
       btn.disabled = true;
@@ -1857,6 +1924,76 @@
         } else {
           showToast(res.message || 'Gagal menambahkan pegawai.', 'error');
         }
+      });
+    }
+
+    var scheduleTargetId = null;
+
+    function openModalSchedule(id) {
+      var list = adminDataCache.pegawaiList || [];
+      var target = null;
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].id === id) { target = list[i]; break; }
+      }
+      if (!target) {
+        showToast('Data pegawai tidak ditemukan. Muat ulang data lalu coba lagi.', 'warning');
+        return;
+      }
+      scheduleTargetId = id;
+      document.getElementById('scheduleName').innerText = target.fullname;
+      document.getElementById('scheduleInfo').innerText = '@' + target.username + '  |  NIP: ' + target.nip;
+      document.getElementById('scheduleJamMasuk').value = target.jamMasukRaw || target.jamMasuk || '';
+      document.getElementById('scheduleJamPulang').value = target.jamPulangRaw || target.jamPulang || '';
+      document.getElementById('scheduleHint').innerText =
+        'Jadwal default saat ini: ' + (systemSettings.jamMasuk || '08:00') + ' - ' + (systemSettings.jamPulang || '17:00') +
+        '. Toleransi keterlambatan ' + (systemSettings.toleransi || 15) + ' menit berlaku sama untuk semua pegawai.';
+      document.getElementById('modalSchedule').classList.remove('hidden');
+    }
+
+    function closeModalSchedule() {
+      document.getElementById('modalSchedule').classList.add('hidden');
+      scheduleTargetId = null;
+    }
+
+    function useDefaultSchedule() {
+      document.getElementById('scheduleJamMasuk').value = '';
+      document.getElementById('scheduleJamPulang').value = '';
+      submitSchedule(null);
+    }
+
+    function submitSchedule(e) {
+      if (e) e.preventDefault();
+      if (!scheduleTargetId) return;
+      var jm = document.getElementById('scheduleJamMasuk').value;
+      var jp = document.getElementById('scheduleJamPulang').value;
+
+      if ((jm && !jp) || (!jm && jp)) {
+        showToast('Isi jam masuk dan jam pulang sekaligus, atau pakai jadwal default.', 'warning');
+        return;
+      }
+      if (jm && jp <= jm) {
+        showToast('Jam pulang harus setelah jam masuk.', 'warning');
+        return;
+      }
+
+      var btn = document.getElementById('btnSubmitSchedule');
+      btn.disabled = true;
+      btn.innerText = 'Menyimpan...';
+
+      callBackend('updatePegawaiSchedule', [sessionToken, scheduleTargetId, jm, jp], function(res) {
+        btn.disabled = false;
+        btn.innerText = 'Simpan';
+        if (res.success) {
+          showToast(res.message || 'Jadwal disimpan.', 'success');
+          closeModalSchedule();
+          loadAdminDashboard();
+        } else {
+          showToast(res.message || 'Gagal menyimpan jadwal.', 'error');
+        }
+      }, function(err) {
+        btn.disabled = false;
+        btn.innerText = 'Simpan';
+        showToast('Koneksi bermasalah: ' + (err.message || err.toString()), 'error');
       });
     }
 
@@ -1991,6 +2128,13 @@
     // TAB 3: SETTING GPS & JAM KERJA
     // ==========================================
     function populateSettingsInputs() {
+      var latOk = isFinite(systemSettings.lat) && Math.abs(systemSettings.lat) <= 90;
+      var lngOk = isFinite(systemSettings.lng) && Math.abs(systemSettings.lng) <= 180;
+      if (!latOk || !lngOk) {
+        systemSettings.lat = '';
+        systemSettings.lng = '';
+        showToast('Koordinat kantor tersimpan rusak. Klik "Gunakan Lokasi GPS Saya Saat Ini" di lokasi kantor, lalu Simpan.', 'warning');
+      }
       document.getElementById('settingLat').value = systemSettings.lat;
       document.getElementById('settingLng').value = systemSettings.lng;
       document.getElementById('settingRadius').value = systemSettings.radius;
