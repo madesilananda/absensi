@@ -1445,7 +1445,7 @@
     // ==========================================
     // KONFIGURASI: tempel URL Web App Apps Script (berakhiran /exec)
     // ==========================================
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxE_VHbxYTYJV9HWslu6yn_9wLhu1RC2MuG5ZtlfL_Ekwv2eBfojm_C1AjLS5YCfSxnUQ/exec';
+    var API_URL = 'GANTI_DENGAN_URL_EXEC_APPS_SCRIPT';
 
     // System State
     var currentUser = null;
@@ -1569,14 +1569,17 @@
       else if (type === 'warning') { bg = '#d97706'; icon = 'warning'; }
 
       toast.style.background = bg;
-      toast.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px;">' + icon + '</span><span>' + message + '</span>';
+      toast.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px;">' + icon + '</span><span style="flex:1;">' + message + '</span><span onclick="this.parentElement.remove()" class="material-symbols-outlined" style="font-size:16px;cursor:pointer;opacity:0.7;margin-left:8px;">close</span>';
       container.appendChild(toast);
 
+      var duration = type === 'error' ? 8000 : 3500;
       setTimeout(function() {
-        toast.style.opacity = '0';
-        toast.style.transition = 'opacity 0.3s ease';
-        setTimeout(function() { toast.remove(); }, 300);
-      }, 3500);
+        if (toast && toast.parentNode) {
+          toast.style.opacity = '0';
+          toast.style.transition = 'opacity 0.3s ease';
+          setTimeout(function() { toast.remove(); }, 300);
+        }
+      }, duration);
     }
 
     function isAdminUser(user) {
@@ -1621,22 +1624,30 @@
     }
 
     function callBackend(functionName, args, onSuccess, onFailure) {
-      // Prioritaskan google.script.run jika berjalan langsung di Apps Script
-      if (typeof google !== 'undefined' && google.script && google.script.run && typeof google.script.run[functionName] === 'function') {
-        var runner = google.script.run
-          .withSuccessHandler(function(res) {
-            if (res && res.sessionExpired && sessionToken) {
-              handleSessionExpired();
-              return;
-            }
-            if (onSuccess) onSuccess(res);
-          })
-          .withFailureHandler(function(err) {
-            if (onFailure) onFailure(err);
-            else showToast('Error server: ' + (err.message || err.toString()), 'error');
-          });
-        runner[functionName].apply(runner, args);
-        return;
+      // 1. Prioritaskan google.script.run jika berjalan langsung di Apps Script
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        try {
+          var runner = google.script.run
+            .withSuccessHandler(function(res) {
+              if (res && res.sessionExpired && sessionToken) {
+                handleSessionExpired();
+                return;
+              }
+              if (onSuccess) onSuccess(res);
+            })
+            .withFailureHandler(function(err) {
+              console.error('google.script.run error for ' + functionName + ':', err);
+              if (onFailure) onFailure(err);
+              else showToast('Error server: ' + (err.message || err.toString()), 'error');
+            });
+
+          if (runner && runner[functionName]) {
+            runner[functionName].apply(runner, args || []);
+            return;
+          }
+        } catch(gasErr) {
+          console.warn('google.script.run fallback ke fetch:', gasErr);
+        }
       }
 
       var apiUrl = resolveApiUrl();
@@ -1716,7 +1727,7 @@
         btn.disabled = false;
         text.innerText = 'Masuk ke Sistem';
 
-        if (res.success) {
+        if (res && res.success) {
           sessionToken = res.token;
           currentUser = res.user;
           sessionStorage.setItem('presensi_token', sessionToken);
@@ -1724,7 +1735,15 @@
           showToast('Login berhasil! Selamat datang, ' + currentUser.fullname, 'success');
           setupSessionUI();
         } else {
-          showToast(res.message || 'Login gagal.', 'error');
+          var errorMsg = 'Login gagal.';
+          if (res && res.message) {
+            errorMsg = res.message;
+          } else if (res && res.error) {
+            errorMsg = 'Error server: ' + res.error;
+          } else if (res && res.status === 'ok') {
+            errorMsg = 'Versi server belum diperbarui. Di Apps Script, buka Deploy > Kelola penerapan > Edit (Pensil) > Versi: Versi Baru > Terapkan.';
+          }
+          showToast(errorMsg, 'error');
         }
       }, function(err) {
         btn.disabled = false;
