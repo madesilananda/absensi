@@ -5,6 +5,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
   <title>PresensiCore - Enterprise Field Biometric & Portal Admin</title>
+  <link id="appFaviconTag" rel="icon" type="image/x-icon" href=""/>
   
   <!-- Google Fonts: Inter & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -437,11 +438,12 @@
       
       <!-- Brand Header -->
       <div style="text-align: center; margin-bottom: 24px;">
-        <div style="width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); border-radius: 18px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 20px rgba(0,40,142,0.3);">
-          <span class="material-symbols-outlined" style="font-size: 34px;">fingerprint</span>
+        <div id="loginLogoContainer" style="width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); border-radius: 18px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 20px rgba(0,40,142,0.3); overflow: hidden;">
+          <span id="loginLogoIcon" class="material-symbols-outlined" style="font-size: 34px;">fingerprint</span>
+          <img id="loginLogoImg" src="" alt="Logo" style="display: none; width: 100%; height: 100%; object-fit: cover;"/>
         </div>
-        <h1 class="font-heading" style="font-size: 24px; font-weight: 800; color: var(--text);">PresensiCore</h1>
-        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Enterprise Biometric & Portal Admin HRD</p>
+        <h1 id="loginAppName" class="font-heading" style="font-size: 24px; font-weight: 800; color: var(--text);">PresensiCore</h1>
+        <p id="loginAppTagline" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Enterprise Biometric & Portal Admin HRD</p>
       </div>
 
       <!-- Login Form -->
@@ -564,7 +566,7 @@
 
       <button id="adminTabBtnPengaturan" onclick="switchAdminTab('pengaturan')" class="tab-btn">
         <span class="material-symbols-outlined" style="font-size: 18px;">settings_suggest</span>
-        <span>Setting GPS & Jam Kerja</span>
+        <span>Setting & Branding</span>
       </button>
     </div>
 
@@ -702,6 +704,98 @@
     <section id="adminTabPengaturan" class="hidden">
       <div class="grid-2" style="margin-bottom: 20px;">
         
+        <!-- Setting 0: Branding & Identitas Aplikasi -->
+        <div class="card" style="grid-column: 1 / -1;">
+          <div style="display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--outline); padding-bottom: 14px; margin-bottom: 16px;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--surface-high); color: var(--primary); display: flex; align-items: center; justify-content: center;">
+              <span class="material-symbols-outlined" style="font-size: 24px;">palette</span>
+            </div>
+            <div>
+              <h3 class="font-heading" style="font-size: 15px; font-weight: 700;">Branding & Identitas Aplikasi</h3>
+              <p style="font-size: 12px; color: var(--text-muted);">Atur nama aplikasi, tagline, logo halaman login, dan logo website (favicon tab browser).</p>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+            <div class="form-group">
+              <label class="form-label" for="settingAppName">Nama Aplikasi</label>
+              <input type="text" id="settingAppName" oninput="previewBranding()" class="form-input" placeholder="PresensiCore" maxlength="50"/>
+              <span style="font-size: 11px; color: var(--text-muted);">Tampil pada halaman login, tab browser, dan header sistem.</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="settingAppTagline">Tagline / Subjudul Aplikasi</label>
+              <input type="text" id="settingAppTagline" oninput="previewBranding()" class="form-input" placeholder="Enterprise Biometric & Portal Admin HRD" maxlength="100"/>
+              <span style="font-size: 11px; color: var(--text-muted);">Teks deskripsi di bawah nama aplikasi pada halaman login.</span>
+            </div>
+
+            <!-- Logo Login -->
+            <div class="form-group">
+              <label class="form-label" for="settingAppLogoUrl">
+                Logo Halaman Login (URL / Upload Gambar)
+              </label>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="settingAppLogoUrl" oninput="previewBranding()" class="form-input" placeholder="https://... atau paste link Google Drive" style="font-size: 12px; flex: 1;"/>
+                <input type="file" id="fileInputLogo" accept="image/*" style="display: none;" onchange="handleLogoFileSelect(this)"/>
+                <button type="button" onclick="document.getElementById('fileInputLogo').click()" class="btn btn-outline" style="padding: 6px 12px; font-size: 11px; white-space: nowrap;" title="Upload dari komputer/HP">
+                  <span class="material-symbols-outlined" style="font-size: 16px;">upload_file</span>
+                  <span>Upload</span>
+                </button>
+                <button type="button" onclick="clearLogoSetting()" class="btn btn-outline" style="padding: 6px 10px; font-size: 11px; color: var(--danger);" title="Reset ke default">
+                  <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
+                </button>
+              </div>
+              <span style="font-size: 11px; color: var(--text-muted);">Bisa paste link gambar / Google Drive (publik), atau klik <b>Upload</b> langsung dari komputer/HP.</span>
+            </div>
+
+            <!-- Logo Favicon Website -->
+            <div class="form-group">
+              <label class="form-label" for="settingAppFaviconUrl">
+                Logo Website / Favicon Tab Browser (URL / Upload)
+              </label>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="settingAppFaviconUrl" oninput="previewBranding()" class="form-input" placeholder="https://... (ICO/PNG)" style="font-size: 12px; flex: 1;"/>
+                <input type="file" id="fileInputFavicon" accept="image/*" style="display: none;" onchange="handleFaviconFileSelect(this)"/>
+                <button type="button" onclick="document.getElementById('fileInputFavicon').click()" class="btn btn-outline" style="padding: 6px 12px; font-size: 11px; white-space: nowrap;" title="Upload favicon dari perangkat">
+                  <span class="material-symbols-outlined" style="font-size: 16px;">upload_file</span>
+                  <span>Upload</span>
+                </button>
+                <button type="button" onclick="clearFaviconSetting()" class="btn btn-outline" style="padding: 6px 10px; font-size: 11px; color: var(--danger);" title="Reset ke default">
+                  <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
+                </button>
+              </div>
+              <span style="font-size: 11px; color: var(--text-muted);">Ikon kecil di tab browser (favicon). Klik <b>Upload</b> atau paste link gambar.</span>
+            </div>
+          </div>
+
+          <!-- Branding Preview Box -->
+          <div style="margin-top: 16px; border-top: 1px solid var(--outline); padding-top: 16px;">
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase;">
+              Preview Tampilan Login & Tab Browser
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
+              <!-- Login Card Preview -->
+              <div style="display: flex; align-items: center; gap: 14px; background: var(--surface-low); padding: 14px 18px; border-radius: var(--radius-md); border: 1px solid var(--outline); min-width: 280px; flex: 1;">
+                <div id="brandingPreviewLogo" style="width: 52px; height: 52px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #fff; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,40,142,0.25);">
+                  <span class="material-symbols-outlined" style="font-size: 28px;">fingerprint</span>
+                </div>
+                <div>
+                  <div id="brandingPreviewName" class="font-heading" style="font-size: 18px; font-weight: 800; color: var(--text);">PresensiCore</div>
+                  <div id="brandingPreviewTagline" style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Enterprise Biometric & Portal Admin HRD</div>
+                </div>
+              </div>
+
+              <!-- Browser Tab Preview -->
+              <div style="background: #1e293b; color: #f1f5f9; padding: 10px 16px; border-radius: 8px 8px 0 0; display: flex; align-items: center; gap: 10px; font-size: 12px; max-width: 300px; border: 1px solid #334155; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+                <img id="brandingPreviewFaviconImg" src="" alt="Favicon" style="width: 16px; height: 16px; border-radius: 2px; display: none; object-fit: contain;"/>
+                <span id="brandingPreviewFaviconIcon" class="material-symbols-outlined" style="font-size: 16px; color: #94a3b8;">language</span>
+                <span id="brandingPreviewTabTitle" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;">PresensiCore - Ente...</span>
+                <span class="material-symbols-outlined" style="font-size: 14px; color: #64748b; margin-left: auto;">close</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Setting 1: GPS Kantor -->
         <div class="card">
           <div style="display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--outline); padding-bottom: 14px; margin-bottom: 16px;">
@@ -1351,7 +1445,7 @@
     // ==========================================
     // KONFIGURASI: tempel URL Web App Apps Script (berakhiran /exec)
     // ==========================================
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxE_VHbxYTYJV9HWslu6yn_9wLhu1RC2MuG5ZtlfL_Ekwv2eBfojm_C1AjLS5YCfSxnUQ/exec';
+    var API_URL = 'GANTI_DENGAN_URL_EXEC_APPS_SCRIPT';
 
     // System State
     var currentUser = null;
@@ -1368,7 +1462,11 @@
       telegramBotToken: '',
       telegramChatId: '',
       telegramNotifEnabled: false,
-      telegramRealtimeAlert: false
+      telegramRealtimeAlert: false,
+      appName: 'PresensiCore',
+      appTagline: 'Enterprise Biometric & Portal Admin HRD',
+      appLogoUrl: '',
+      appFaviconUrl: ''
     };
     var currentDistance = 0;
     var isInsideGeofence = false;
@@ -1411,6 +1509,12 @@
       if (isAppInitialized) return;
       isAppInitialized = true;
       updateClock();
+      // Load branding (logo, nama, favicon) dari server sebelum login
+      try {
+        var cachedBrand = sessionStorage.getItem('presensi_branding');
+        if (cachedBrand) applyBranding(JSON.parse(cachedBrand));
+      } catch(e) {}
+      loadBrandingOnStartup();
 
       var savedToken = null;
       var savedUser = null;
@@ -1517,6 +1621,24 @@
     }
 
     function callBackend(functionName, args, onSuccess, onFailure) {
+      // Prioritaskan google.script.run jika berjalan langsung di Apps Script
+      if (typeof google !== 'undefined' && google.script && google.script.run && typeof google.script.run[functionName] === 'function') {
+        var runner = google.script.run
+          .withSuccessHandler(function(res) {
+            if (res && res.sessionExpired && sessionToken) {
+              handleSessionExpired();
+              return;
+            }
+            if (onSuccess) onSuccess(res);
+          })
+          .withFailureHandler(function(err) {
+            if (onFailure) onFailure(err);
+            else showToast('Error server: ' + (err.message || err.toString()), 'error');
+          });
+        runner[functionName].apply(runner, args);
+        return;
+      }
+
       var apiUrl = resolveApiUrl();
       if (!apiUrl) {
         var cfgErr = new Error('URL Apps Script belum diisi. Muat ulang halaman lalu tempel URL /exec.');
@@ -1744,6 +1866,7 @@
           adminDataCache = res.data;
           if (res.data.pengaturan) {
             systemSettings = res.data.pengaturan;
+            applyBranding(systemSettings);
           }
           renderAdminSummary(res.data.summary);
           renderAdminAbsensiTable(res.data.absensiToday);
@@ -2246,6 +2369,11 @@
       document.getElementById('settingTelegramChatId').value = systemSettings.telegramChatId || '';
       document.getElementById('settingTelegramEnabled').checked = !!systemSettings.telegramNotifEnabled;
       document.getElementById('settingTelegramRealtime').checked = !!systemSettings.telegramRealtimeAlert;
+      document.getElementById('settingAppName').value = systemSettings.appName || 'PresensiCore';
+      document.getElementById('settingAppTagline').value = systemSettings.appTagline || '';
+      document.getElementById('settingAppLogoUrl').value = systemSettings.appLogoUrl || '';
+      document.getElementById('settingAppFaviconUrl').value = systemSettings.appFaviconUrl || '';
+      previewBranding();
     }
 
     function toggleTokenVisibility() {
@@ -2323,7 +2451,183 @@
       }, { enableHighAccuracy: true });
     }
 
-    function previewGoogleMaps() {
+    // ==========================================
+    // BRANDING & IDENTITAS APLIKASI
+    // ==========================================
+    function cleanImageUrl(url) {
+      if (!url) return '';
+      url = url.trim();
+      var driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (driveMatch && driveMatch[1]) {
+        return 'https://lh3.googleusercontent.com/d/' + driveMatch[1];
+      }
+      return url;
+    }
+
+    function applyBranding(settings) {
+      var appName = (settings && settings.appName) || 'PresensiCore';
+      var appTagline = (settings && settings.appTagline) || 'Enterprise Biometric & Portal Admin HRD';
+      var logoUrl = cleanImageUrl((settings && settings.appLogoUrl) || '');
+      var faviconUrl = cleanImageUrl((settings && settings.appFaviconUrl) || '');
+
+      // 1. Update Halaman Login
+      var nameEl = document.getElementById('loginAppName');
+      var taglineEl = document.getElementById('loginAppTagline');
+      var logoIcon = document.getElementById('loginLogoIcon');
+      var logoImg = document.getElementById('loginLogoImg');
+
+      if (nameEl) nameEl.innerText = appName;
+      if (taglineEl) taglineEl.innerText = appTagline;
+
+      if (logoImg && logoIcon) {
+        if (logoUrl) {
+          logoImg.src = logoUrl;
+          logoImg.style.display = 'block';
+          logoIcon.style.display = 'none';
+          logoImg.onerror = function() {
+            logoImg.style.display = 'none';
+            logoIcon.style.display = 'inline';
+          };
+        } else {
+          logoImg.style.display = 'none';
+          logoIcon.style.display = 'inline';
+        }
+      }
+
+      // 2. Update Judul Tab Browser
+      document.title = appName + ' - ' + appTagline;
+
+      // 3. Update Favicon Tab Browser
+      if (faviconUrl) {
+        var existingFav = document.getElementById('appFaviconTag') || document.querySelector('link[rel="icon"]');
+        if (!existingFav) {
+          existingFav = document.createElement('link');
+          existingFav.id = 'appFaviconTag';
+          existingFav.rel = 'icon';
+          document.head.appendChild(existingFav);
+        }
+        existingFav.href = faviconUrl;
+      }
+    }
+
+    function previewBranding() {
+      var name = document.getElementById('settingAppName').value.trim() || 'PresensiCore';
+      var tagline = document.getElementById('settingAppTagline').value.trim() || 'Enterprise Biometric & Portal Admin HRD';
+      var logoUrl = cleanImageUrl(document.getElementById('settingAppLogoUrl').value);
+      var faviconUrl = cleanImageUrl(document.getElementById('settingAppFaviconUrl').value);
+
+      document.getElementById('brandingPreviewName').innerText = name;
+      document.getElementById('brandingPreviewTagline').innerText = tagline;
+
+      // Preview Logo Login
+      var previewLogo = document.getElementById('brandingPreviewLogo');
+      if (previewLogo) {
+        if (logoUrl) {
+          previewLogo.innerHTML = '<img src="' + logoUrl.replace(/"/g, '&quot;') + '" alt="Logo" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'inline\';"><span class="material-symbols-outlined" style="font-size:28px;display:none;">fingerprint</span>';
+        } else {
+          previewLogo.innerHTML = '<span class="material-symbols-outlined" style="font-size: 28px;">fingerprint</span>';
+        }
+      }
+
+      // Preview Tab Browser
+      var tabTitle = document.getElementById('brandingPreviewTabTitle');
+      if (tabTitle) tabTitle.innerText = name + ' - ' + (tagline ? tagline.substring(0, 15) + '...' : '');
+
+      var favImg = document.getElementById('brandingPreviewFaviconImg');
+      var favIcon = document.getElementById('brandingPreviewFaviconIcon');
+      if (favImg && favIcon) {
+        if (faviconUrl) {
+          favImg.src = faviconUrl;
+          favImg.style.display = 'inline';
+          favIcon.style.display = 'none';
+          favImg.onerror = function() {
+            favImg.style.display = 'none';
+            favIcon.style.display = 'inline';
+          };
+        } else {
+          favImg.style.display = 'none';
+          favIcon.style.display = 'inline';
+        }
+      }
+    }
+
+    function handleLogoFileSelect(input) {
+      handleImageFileUpload(input, 'settingAppLogoUrl', 128, function(dataUrl) {
+        previewBranding();
+      });
+    }
+
+    function handleFaviconFileSelect(input) {
+      handleImageFileUpload(input, 'settingAppFaviconUrl', 64, function(dataUrl) {
+        previewBranding();
+      });
+    }
+
+    function clearLogoSetting() {
+      document.getElementById('settingAppLogoUrl').value = '';
+      previewBranding();
+      showToast('Logo login direset ke ikon fingerprint bawaan.', 'info');
+    }
+
+    function clearFaviconSetting() {
+      document.getElementById('settingAppFaviconUrl').value = '';
+      previewBranding();
+      showToast('Favicon tab browser direset ke default.', 'info');
+    }
+
+    function handleImageFileUpload(fileInput, targetInputId, maxSize, onDone) {
+      var file = fileInput.files && fileInput.files[0];
+      if (!file) return;
+      if (!file.type.match(/^image\//)) {
+        showToast('File harus berupa format gambar (PNG, JPG, ICO, WebP, dsb)', 'warning');
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          var maxDim = maxSize || 128;
+          var w = img.width;
+          var h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+          var canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          var dataUrl = canvas.toDataURL(file.type === 'image/png' ? 'image/png' : 'image/jpeg', 0.85);
+          document.getElementById(targetInputId).value = dataUrl;
+          if (onDone) onDone(dataUrl);
+          showToast('Gambar berhasil diunggah & dioptimasi!', 'success');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function loadBrandingOnStartup() {
+      callBackend('getBrandingSettings', [], function(res) {
+        if (res && res.success && res.data) {
+          applyBranding(res.data);
+          try { sessionStorage.setItem('presensi_branding', JSON.stringify(res.data)); } catch(e) {}
+        }
+      }, function() {
+        try {
+          var cached = sessionStorage.getItem('presensi_branding');
+          if (cached) applyBranding(JSON.parse(cached));
+        } catch(e) {}
+      });
+    }
+
+        function previewGoogleMaps() {
       var lat = document.getElementById('settingLat').value;
       var lng = document.getElementById('settingLng').value;
       if (lat && lng) {
@@ -2356,7 +2660,11 @@
         telegramBotToken: document.getElementById('settingTelegramToken').value.trim(),
         telegramChatId: document.getElementById('settingTelegramChatId').value.trim(),
         telegramNotifEnabled: document.getElementById('settingTelegramEnabled').checked,
-        telegramRealtimeAlert: document.getElementById('settingTelegramRealtime').checked
+        telegramRealtimeAlert: document.getElementById('settingTelegramRealtime').checked,
+        appName: document.getElementById('settingAppName').value.trim() || 'PresensiCore',
+        appTagline: document.getElementById('settingAppTagline').value.trim(),
+        appLogoUrl: cleanImageUrl(document.getElementById('settingAppLogoUrl').value),
+        appFaviconUrl: cleanImageUrl(document.getElementById('settingAppFaviconUrl').value)
       };
 
       var btn = document.getElementById('btnSaveSettings');
@@ -2370,6 +2678,8 @@
 
         if (res.success) {
           systemSettings = payload;
+          applyBranding(systemSettings);
+          try { sessionStorage.setItem('presensi_branding', JSON.stringify(systemSettings)); } catch(e) {}
           showToast(res.message || 'Pengaturan berhasil diperbarui!', 'success');
           loadAdminDashboard();
         } else {
