@@ -1673,6 +1673,13 @@
           handleSessionExpired();
           return;
         }
+        // Deteksi jika server masih menjalankan Code.gs versi lama
+        if (res && res.status === 'ok' && typeof res.success === 'undefined') {
+          res = {
+            success: false,
+            message: 'Server Apps Script masih versi lama. Harap Deploy Versi Baru di Apps Script (Deploy > Kelola Penerapan > Edit > Versi: Versi Baru).'
+          };
+        }
         try {
           onSuccess(res);
         } catch (handlerErr) {
