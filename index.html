@@ -556,6 +556,12 @@
         <span id="badgeTotalPegawai" class="badge badge-neutral" style="font-size: 10px; margin-left: 4px;">0</span>
       </button>
 
+      <button id="adminTabBtnWajah" onclick="switchAdminTab('wajah')" class="tab-btn">
+        <span class="material-symbols-outlined" style="font-size: 18px;">face</span>
+        <span>Pendaftaran Wajah</span>
+        <span id="badgeWajahBelum" class="badge badge-danger hidden" style="font-size: 10px; margin-left: 4px;">0</span>
+      </button>
+
       <button id="adminTabBtnPengaturan" onclick="switchAdminTab('pengaturan')" class="tab-btn">
         <span class="material-symbols-outlined" style="font-size: 18px;">settings_suggest</span>
         <span>Setting GPS & Jam Kerja</span>
@@ -663,6 +669,29 @@
       </div>
 
       <div id="adminPegawaiGrid" class="grid-cards">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB: PENDAFTARAN WAJAH -->
+    <!-- ============================================== -->
+    <section id="adminTabWajah" class="hidden">
+      <div class="card" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h2 class="font-heading" style="font-size: 16px; font-weight: 700;">Pendaftaran Wajah Pegawai</h2>
+          <p style="font-size: 12px; color: var(--text-muted); max-width: 620px;">
+            Setiap pegawai hanya punya <b>satu</b> wajah terdaftar. Saat absen, wajah di kamera harus cocok dengan wajah ini, dan wajah yang sama tidak bisa didaftarkan ke dua pegawai.
+            Pegawai yang belum terdaftar tidak bisa absen.
+          </p>
+        </div>
+        <button onclick="loadFaceList()" class="btn btn-outline">
+          <span class="material-symbols-outlined" style="font-size: 18px;">sync</span>
+          <span>Muat Ulang</span>
+        </button>
+      </div>
+
+      <div id="faceGrid" class="grid-cards">
         <!-- Rendered dynamically -->
       </div>
     </section>
@@ -957,10 +986,10 @@
           <span class="material-symbols-outlined" style="color: var(--primary);">face</span>
           <div>
             <div style="font-size: 13px; font-weight: 700;">Kamera Presensi</div>
-            <div style="font-size: 10px; color: var(--text-muted);">Foto bukti kehadiran (pencocokan wajah belum aktif)</div>
+            <div style="font-size: 10px; color: var(--text-muted);">Wajah Anda dicocokkan dengan wajah yang didaftarkan admin</div>
           </div>
         </div>
-        <span id="livenessScoreBadge" class="badge badge-neutral">Foto bukti</span>
+        <span id="livenessScoreBadge" class="badge badge-neutral">Verifikasi wajah</span>
       </div>
 
       <!-- Viewfinder -->
@@ -981,6 +1010,10 @@
           <span style="font-size: 11px;">Kamera tidak aktif. Klik tombol untuk mengaktifkan.</span>
           <button onclick="startCamera()" class="btn btn-primary" style="padding: 6px 14px; font-size: 11px;">Aktifkan Kamera</button>
         </div>
+      </div>
+
+      <div id="faceNotice" class="hidden" style="margin-top: 10px; padding: 10px 12px; border-radius: var(--radius-md); background: var(--warning-light); color: #92400e; font-size: 11px; font-weight: 600;">
+        Wajah Anda belum didaftarkan. Minta admin mendaftarkan wajah Anda sebelum absen.
       </div>
 
       <div style="display: flex; gap: 8px; margin-top: 10px;">
@@ -1140,6 +1173,46 @@
   </div>
 
   <!-- ========================================== -->
+  <!-- MODAL: DAFTARKAN WAJAH PEGAWAI (ADMIN) -->
+  <!-- ========================================== -->
+  <div id="modalEnrollFace" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 460px;">
+      <div style="padding: 16px 20px; border-bottom: 1px solid var(--outline); display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="font-heading" style="font-size: 15px; font-weight: 700;">Daftarkan Wajah</h3>
+        <button onclick="closeEnrollFace()" class="btn btn-outline" style="padding: 6px; border: none;">
+          <span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+        </button>
+      </div>
+
+      <div style="padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+        <div class="card-sm" style="background: var(--surface-low);">
+          <div id="enrollName" style="font-weight: 700; font-size: 13px;">Nama Pegawai</div>
+          <div id="enrollInfo" style="font-size: 11px; color: var(--text-muted); font-family: monospace;">NIP</div>
+        </div>
+
+        <div style="position: relative; width: 100%; aspect-ratio: 4/3; background: #0f172a; border-radius: var(--radius-md); overflow: hidden; border: 2px solid var(--primary-container);">
+          <video id="enrollVideo" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video>
+          <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;">
+            <div style="width: 150px; height: 195px; border-radius: 50%; border: 2px dashed rgba(221,225,255,0.85);"></div>
+          </div>
+        </div>
+        <canvas id="enrollCanvas" style="display: none;"></canvas>
+
+        <div id="enrollStatus" style="font-size: 12px; color: var(--text-muted); min-height: 32px;">Menyiapkan kamera...</div>
+
+        <span style="font-size: 11px; color: var(--text-muted);">
+          Minta pegawai menghadap lurus ke kamera, wajah di dalam bingkai, pencahayaan cukup, tanpa masker atau kacamata hitam. Hanya satu wajah yang boleh terlihat.
+        </span>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px;">
+          <button type="button" onclick="closeEnrollFace()" class="btn btn-outline">Batal</button>
+          <button type="button" id="btnEnrollCapture" onclick="captureEnrollFace()" class="btn btn-primary" disabled>Ambil & Simpan Wajah</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
   <!-- MODAL: ATUR JAM KERJA PEGAWAI (ADMIN) -->
   <!-- ========================================== -->
   <div id="modalSchedule" class="modal-overlay hidden">
@@ -1278,7 +1351,7 @@
     // ==========================================
     // KONFIGURASI: tempel URL Web App Apps Script (berakhiran /exec)
     // ==========================================
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxE_VHbxYTYJV9HWslu6yn_9wLhu1RC2MuG5ZtlfL_Ekwv2eBfojm_C1AjLS5YCfSxnUQ/exec';
+    var API_URL = 'GANTI_DENGAN_URL_EXEC_APPS_SCRIPT';
 
     // System State
     var currentUser = null;
@@ -1424,9 +1497,29 @@
       showToast('Sesi berakhir. Silakan login kembali.', 'warning');
     }
 
+    // URL Web App Apps Script: dari konstanta API_URL, atau (jika belum diisi) dari isian satu kali
+    // yang disimpan di browser ini, sehingga tidak hilang saat index.html diganti.
+    function resolveApiUrl() {
+      if (API_URL && API_URL.indexOf('GANTI_DENGAN') !== 0) return API_URL;
+      var saved = '';
+      try { saved = localStorage.getItem('presensi_api_url') || ''; } catch (e) {}
+      if (saved) return saved;
+
+      var input = window.prompt('Tempel URL Web App Apps Script Anda (berakhiran /exec).\nCukup sekali di browser ini.');
+      if (!input) return '';
+      input = input.trim();
+      if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(input)) {
+        showToast('URL tidak valid. Harus diawali https://script.google.com/ dan berakhiran /exec', 'error');
+        return '';
+      }
+      try { localStorage.setItem('presensi_api_url', input); } catch (e) {}
+      return input;
+    }
+
     function callBackend(functionName, args, onSuccess, onFailure) {
-      if (!API_URL || API_URL.indexOf('GANTI_DENGAN') === 0) {
-        var cfgErr = new Error('API_URL belum diisi di index.html');
+      var apiUrl = resolveApiUrl();
+      if (!apiUrl) {
+        var cfgErr = new Error('URL Apps Script belum diisi. Muat ulang halaman lalu tempel URL /exec.');
         showToast(cfgErr.message, 'error');
         if (onFailure) onFailure(cfgErr);
         return;
@@ -1435,7 +1528,7 @@
       var controller = new AbortController();
       var timer = setTimeout(function() { controller.abort(); }, 30000);
 
-      fetch(API_URL, {
+      fetch(apiUrl, {
         method: 'POST',
         // text/plain menghindari preflight CORS yang tidak didukung Apps Script
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -1610,6 +1703,8 @@
       var tabRingkasan = document.getElementById('adminTabRingkasan');
       var tabPegawai = document.getElementById('adminTabPegawai');
       var tabPengaturan = document.getElementById('adminTabPengaturan');
+      var tabWajah = document.getElementById('adminTabWajah');
+      var btnW = document.getElementById('adminTabBtnWajah');
 
       var btnR = document.getElementById('adminTabBtnRingkasan');
       var btnP = document.getElementById('adminTabBtnPegawai');
@@ -1618,6 +1713,8 @@
       tabRingkasan.classList.add('hidden');
       tabPegawai.classList.add('hidden');
       tabPengaturan.classList.add('hidden');
+      tabWajah.classList.add('hidden');
+      btnW.classList.remove('active');
 
       btnR.classList.remove('active');
       btnP.classList.remove('active');
@@ -1630,6 +1727,10 @@
         tabPegawai.classList.remove('hidden');
         btnP.classList.add('active');
         renderAdminPegawaiGrid();
+      } else if (tabName === 'wajah') {
+        tabWajah.classList.remove('hidden');
+        btnW.classList.add('active');
+        loadFaceList();
       } else if (tabName === 'pengaturan') {
         tabPengaturan.classList.remove('hidden');
         btnS.classList.add('active');
@@ -1747,7 +1848,7 @@
           '<td>' +
             '<div style="display: flex; align-items: center; gap: 4px; font-weight: 600;">' +
               '<span class="material-symbols-outlined" style="font-size: 16px; color: var(--text-muted);">photo_camera</span>' +
-              '<span>' + (row.status_liveness === 'TANPA_FOTO' ? 'Tanpa foto' : 'Foto bukti') + '</span>' +
+              '<span>' + livenessLabel(row.status_liveness) + '</span>' +
             '</div>' +
           '</td>' +
           '<td style="text-align: center;">' +
@@ -2116,7 +2217,7 @@
       document.getElementById('zoomPhotoImage').src = data.foto_bukti;
       document.getElementById('zoomPhotoPegawai').innerText = data.nama + ' (' + data.nip + ')';
       document.getElementById('zoomPhotoMetadata').innerText = data.tanggal + ' | Masuk: ' + data.jam_masuk + ' | Jarak: ' + data.jarak_meter + 'm';
-      document.getElementById('zoomPhotoLiveness').innerText = (data.status_liveness === 'TANPA_FOTO') ? 'Tanpa foto' : 'Foto bukti';
+      document.getElementById('zoomPhotoLiveness').innerText = livenessLabel(data.status_liveness);
       document.getElementById('modalZoomPhoto').classList.remove('hidden');
     }
 
@@ -2374,6 +2475,277 @@
       }
     }
 
+    // ==========================================
+    // PENGENALAN WAJAH (face-api, berjalan di browser; hanya angka 128 dimensi yang dikirim ke server)
+    // ==========================================
+    var FACE_LIB_URLS = [
+      'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/dist/face-api.js',
+      'https://unpkg.com/@vladmandic/face-api@1.7.12/dist/face-api.js'
+    ];
+    var FACE_MODEL_URLS = [
+      'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model/',
+      'https://vladmandic.github.io/face-api/model/'
+    ];
+    var faceEnginePromise = null;
+
+    function escHtml(v) {
+      return String(v === null || v === undefined ? '' : v).replace(/[&<>"']/g, function(c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    function livenessLabel(v) {
+      if (v === 'WAJAH_COCOK') return 'Wajah cocok';
+      if (v === 'TANPA_FOTO') return 'Tanpa foto';
+      return 'Foto bukti';
+    }
+
+    function tryEachSource(list, fn) {
+      var i = 0;
+      function next(lastErr) {
+        if (i >= list.length) return Promise.reject(lastErr || new Error('semua sumber gagal'));
+        var u = list[i++];
+        return fn(u).catch(next);
+      }
+      return next();
+    }
+
+    function loadScriptOnce(url) {
+      return new Promise(function(resolve, reject) {
+        var el = document.createElement('script');
+        el.src = url;
+        el.async = true;
+        el.onload = function() { resolve(); };
+        el.onerror = function() { reject(new Error('gagal memuat ' + url)); };
+        document.head.appendChild(el);
+      });
+    }
+
+    function ensureFaceEngine() {
+      if (faceEnginePromise) return faceEnginePromise;
+      var step = window.faceapi ? Promise.resolve() : tryEachSource(FACE_LIB_URLS, loadScriptOnce);
+      faceEnginePromise = step.then(function() {
+        if (!window.faceapi) throw new Error('pustaka pengenalan wajah tidak tersedia');
+        return tryEachSource(FACE_MODEL_URLS, function(base) {
+          return Promise.all([
+            faceapi.nets.tinyFaceDetector.loadFromUri(base),
+            faceapi.nets.faceLandmark68TinyNet.loadFromUri(base),
+            faceapi.nets.faceRecognitionNet.loadFromUri(base)
+          ]);
+        });
+      }).catch(function(e) {
+        faceEnginePromise = null;
+        throw e;
+      });
+      return faceEnginePromise;
+    }
+
+    // Mengembalikan { descriptor: [128 angka], box } untuk TEPAT SATU wajah, atau melempar Error berpesan jelas
+    function detectOneFace(video) {
+      var opts = new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 });
+      return faceapi.detectAllFaces(video, opts).withFaceLandmarks(true).withFaceDescriptors().then(function(list) {
+        if (!list || list.length === 0) throw new Error('Wajah tidak terdeteksi. Hadapkan wajah lurus ke kamera dengan cahaya cukup.');
+        if (list.length > 1) throw new Error('Terdeteksi lebih dari satu wajah. Pastikan hanya satu orang di depan kamera.');
+        var det = list[0];
+        var box = det.detection.box;
+        if (video.videoWidth && box.width < video.videoWidth * 0.22) {
+          throw new Error('Wajah terlalu jauh. Dekatkan wajah ke kamera.');
+        }
+        return { descriptor: Array.prototype.slice.call(det.descriptor), box: box };
+      });
+    }
+
+    function faceDistance(a, b) {
+      var sum = 0;
+      for (var i = 0; i < a.length; i++) { var d = a[i] - b[i]; sum += d * d; }
+      return Math.sqrt(sum);
+    }
+
+    // ---------- Admin: Pendaftaran Wajah ----------
+    var faceList = [];
+    var enrollTarget = null;
+    var enrollStream = null;
+    var enrollBusy = false;
+
+    function loadFaceList() {
+      callBackend('getFaceStatusList', [sessionToken], function(res) {
+        if (res.success) {
+          faceList = res.data || [];
+          renderFaceGrid();
+        } else {
+          showToast(res.message || 'Gagal memuat data wajah.', 'error');
+        }
+      });
+    }
+
+    function renderFaceGrid() {
+      var grid = document.getElementById('faceGrid');
+      var belum = faceList.filter(function(p) { return !p.terdaftar && p.status === 'Aktif'; }).length;
+      var badge = document.getElementById('badgeWajahBelum');
+      if (badge) {
+        badge.innerText = belum;
+        if (belum > 0) badge.classList.remove('hidden'); else badge.classList.add('hidden');
+      }
+      if (faceList.length === 0) {
+        grid.innerHTML = '<div style="text-align: center; padding: 32px; color: var(--text-muted); font-size: 12px;">Belum ada pegawai.</div>';
+        return;
+      }
+      var html = '';
+      faceList.forEach(function(p) {
+        var thumb = (p.terdaftar && p.foto && p.foto.indexOf('data:image/jpeg') === 0)
+          ? '<img src="' + p.foto + '" alt="Wajah" style="width: 56px; height: 56px; border-radius: 12px; object-fit: cover; border: 2px solid var(--outline);"/>'
+          : '<div style="width: 56px; height: 56px; border-radius: 12px; background: var(--surface-high); color: var(--text-muted); display: flex; align-items: center; justify-content: center;"><span class="material-symbols-outlined" style="font-size: 28px;">' + (p.terdaftar ? 'face' : 'face_retouching_off') + '</span></div>';
+        var badgeHtml = p.terdaftar
+          ? '<span class="badge badge-success">Terdaftar</span>'
+          : '<span class="badge badge-danger">Belum terdaftar</span>';
+        html += '<div class="card" style="display: flex; flex-direction: column; gap: 12px;">' +
+          '<div style="display: flex; align-items: center; gap: 12px;">' + thumb +
+            '<div style="min-width: 0;">' +
+              '<h3 class="font-heading" style="font-size: 14px; font-weight: 700;">' + escHtml(p.fullname) + '</h3>' +
+              '<div style="font-size: 11px; color: var(--text-muted); font-family: monospace;">NIP: ' + escHtml(p.nip) + '</div>' +
+              '<div style="font-size: 10px; color: var(--text-muted);">' + (p.terdaftar && p.enrolledAt ? 'Didaftarkan: ' + escHtml(p.enrolledAt) : 'Belum bisa absen') + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; border-top: 1px solid var(--outline); padding-top: 10px; flex-wrap: wrap;">' +
+            badgeHtml +
+            '<div style="display: flex; gap: 6px;">' +
+              (p.terdaftar ? '<button onclick="deleteFaceData(\'' + escHtml(p.id) + '\')" class="btn btn-outline" style="padding: 6px 10px; font-size: 11px;">Hapus</button>' : '') +
+              '<button onclick="openEnrollFace(\'' + escHtml(p.id) + '\')" class="btn btn-primary" style="padding: 6px 12px; font-size: 11px;">' +
+                '<span class="material-symbols-outlined" style="font-size: 16px;">face</span>' +
+                '<span>' + (p.terdaftar ? 'Ganti Wajah' : 'Daftarkan Wajah') + '</span>' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      });
+      grid.innerHTML = html;
+    }
+
+    function setEnrollStatus(msg, isError) {
+      var el = document.getElementById('enrollStatus');
+      el.innerText = msg;
+      el.style.color = isError ? 'var(--danger)' : 'var(--text-muted)';
+    }
+
+    function openEnrollFace(id) {
+      var target = null;
+      for (var i = 0; i < faceList.length; i++) { if (faceList[i].id === id) { target = faceList[i]; break; } }
+      if (!target) return;
+      if (target.terdaftar && !confirm('Ganti wajah ' + target.fullname + '? Wajah lama akan ditimpa.')) return;
+      enrollTarget = target;
+      enrollBusy = false;
+      document.getElementById('enrollName').innerText = target.fullname;
+      document.getElementById('enrollInfo').innerText = '@' + target.username + '  |  NIP: ' + target.nip;
+      document.getElementById('btnEnrollCapture').disabled = true;
+      document.getElementById('modalEnrollFace').classList.remove('hidden');
+      setEnrollStatus('Menyiapkan kamera dan mesin pengenalan wajah...');
+
+      var video = document.getElementById('enrollVideo');
+      var camReady = (navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
+        ? navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } })
+        : Promise.reject(new Error('Kamera tidak didukung oleh browser ini.'));
+
+      camReady.then(function(stream) {
+        if (enrollTarget !== target) { stream.getTracks().forEach(function(t) { t.stop(); }); return; }
+        enrollStream = stream;
+        video.srcObject = stream;
+        return ensureFaceEngine();
+      }).then(function() {
+        if (enrollTarget !== target) return;
+        document.getElementById('btnEnrollCapture').disabled = false;
+        setEnrollStatus('Siap. Minta pegawai menghadap kamera lalu tekan "Ambil & Simpan Wajah".');
+      }).catch(function(err) {
+        var msg = (err && err.name) ? cameraErrorMessage(err) : ('Gagal menyiapkan: ' + ((err && err.message) || err));
+        setEnrollStatus(msg, true);
+      });
+    }
+
+    function closeEnrollFace() {
+      document.getElementById('modalEnrollFace').classList.add('hidden');
+      if (enrollStream) {
+        enrollStream.getTracks().forEach(function(t) { t.stop(); });
+        enrollStream = null;
+      }
+      var video = document.getElementById('enrollVideo');
+      if (video) video.srcObject = null;
+      enrollTarget = null;
+      enrollBusy = false;
+    }
+
+    function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+
+    // Ambil 3 sampel berurutan, pastikan konsisten (orang yang sama), lalu rata-ratakan
+    function captureEnrollFace() {
+      if (!enrollTarget || enrollBusy) return;
+      var video = document.getElementById('enrollVideo');
+      if (!video.videoWidth) { setEnrollStatus('Kamera belum siap.', true); return; }
+
+      var target = enrollTarget;
+      var btn = document.getElementById('btnEnrollCapture');
+      enrollBusy = true;
+      btn.disabled = true;
+      var samples = [];
+
+      function takeSample(n) {
+        setEnrollStatus('Memindai wajah ' + (n + 1) + ' dari 3... tetap diam menghadap kamera.');
+        return detectOneFace(video).then(function(r) {
+          samples.push(r.descriptor);
+          if (n < 2) return sleep(500).then(function() { return takeSample(n + 1); });
+        });
+      }
+
+      takeSample(0).then(function() {
+        for (var i = 0; i < samples.length; i++) {
+          for (var j = i + 1; j < samples.length; j++) {
+            if (faceDistance(samples[i], samples[j]) > 0.4) {
+              throw new Error('Hasil pemindaian tidak konsisten (wajah bergerak). Ulangi dengan wajah diam.');
+            }
+          }
+        }
+        var avg = [];
+        for (var k = 0; k < 128; k++) {
+          avg.push((samples[0][k] + samples[1][k] + samples[2][k]) / 3);
+        }
+        var canvas = document.getElementById('enrollCanvas');
+        canvas.width = 160; canvas.height = 120;
+        canvas.getContext('2d').drawImage(video, 0, 0, 160, 120);
+        var thumb = canvas.toDataURL('image/jpeg', 0.6);
+
+        setEnrollStatus('Menyimpan ke Spreadsheet...');
+        callBackend('enrollFace', [sessionToken, target.id, avg, thumb], function(res) {
+          enrollBusy = false;
+          if (res.success) {
+            showToast(res.message || 'Wajah berhasil didaftarkan.', 'success');
+            closeEnrollFace();
+            loadFaceList();
+            loadAdminDashboard();
+          } else {
+            btn.disabled = false;
+            setEnrollStatus(res.message || 'Gagal menyimpan wajah.', true);
+          }
+        }, function(err) {
+          enrollBusy = false;
+          btn.disabled = false;
+          setEnrollStatus('Koneksi bermasalah: ' + (err.message || err), true);
+        });
+      }).catch(function(err) {
+        enrollBusy = false;
+        btn.disabled = false;
+        setEnrollStatus((err && err.message) || 'Gagal memindai wajah.', true);
+      });
+    }
+
+    function deleteFaceData(id) {
+      var target = null;
+      for (var i = 0; i < faceList.length; i++) { if (faceList[i].id === id) { target = faceList[i]; break; } }
+      if (!target) return;
+      if (!confirm('Hapus data wajah ' + target.fullname + '? Pegawai ini tidak bisa absen sampai wajahnya didaftarkan lagi.')) return;
+      callBackend('deleteFace', [sessionToken, id], function(res) {
+        showToast(res.message || (res.success ? 'Data wajah dihapus.' : 'Gagal menghapus.'), res.success ? 'success' : 'error');
+        if (res.success) { loadFaceList(); loadAdminDashboard(); }
+      });
+    }
+
     function cameraErrorMessage(err) {
       var name = (err && err.name) || '';
       if (name === 'NotAllowedError' || name === 'SecurityError') return 'Izin kamera ditolak. Ketuk ikon gembok di address bar > Izin > Kamera > Izinkan, lalu tekan Aktifkan Kamera.';
@@ -2402,6 +2774,14 @@
         cameraStream = stream;
         video.srcObject = stream;
         if (placeholder) placeholder.classList.add('hidden');
+        var badge = document.getElementById('livenessScoreBadge');
+        if (badge) badge.innerText = 'Memuat pengenal wajah...';
+        ensureFaceEngine().then(function() {
+          if (badge) badge.innerText = 'Pengenal wajah siap';
+        }).catch(function(e) {
+          if (badge) badge.innerText = 'Pengenal wajah gagal';
+          showToast('Mesin pengenal wajah gagal dimuat (' + ((e && e.message) || e) + '). Periksa koneksi internet lalu tekan Segarkan Kamera.', 'error');
+        });
       })
       .catch(function(err) {
         if (placeholder) placeholder.classList.remove('hidden');
@@ -2438,6 +2818,12 @@
             evaluateGeofence();
             document.getElementById('labelTargetMasuk').innerText = 'Target: <= ' + systemSettings.jamMasuk + ' WIB';
             document.getElementById('labelTargetPulang').innerText = 'Target: >= ' + systemSettings.jamPulang + ' WIB';
+          }
+
+          var notice = document.getElementById('faceNotice');
+          if (notice) {
+            if (res.data.wajahTerdaftar === false) notice.classList.remove('hidden');
+            else notice.classList.add('hidden');
           }
 
           var st = res.data.status;
@@ -2508,8 +2894,20 @@
       }
 
       btn.disabled = true;
-      btn.innerHTML = '<span>Mengambil lokasi...</span>';
+      btn.innerHTML = '<span>Memindai wajah...</span>';
 
+      ensureFaceEngine().then(function() {
+        return detectOneFace(video);
+      }).then(function(face) {
+        btn.innerHTML = '<span>Mengambil lokasi...</span>';
+        continueSubmitWithLocation(jenis, btn, resetBtn, face.descriptor);
+      }).catch(function(err) {
+        resetBtn();
+        showToast((err && err.message) || 'Wajah tidak bisa dipindai.', 'error');
+      });
+    }
+
+    function continueSubmitWithLocation(jenis, btn, resetBtn, faceDescriptor) {
       // Selalu ambil lokasi baru saat menekan tombol, bukan memakai lokasi lama
       navigator.geolocation.getCurrentPosition(function(pos) {
         currentCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
@@ -2526,7 +2924,8 @@
           jenis: jenis,
           lat: currentCoords.lat,
           lng: currentCoords.lng,
-          foto: captureSnapshot()
+          foto: captureSnapshot(),
+          faceDescriptor: faceDescriptor
         };
 
         callBackend('processPresensi', [sessionToken, payload], function(res) {
